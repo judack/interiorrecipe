@@ -7,6 +7,7 @@ export async function ensureReservationsTable() {
     CREATE TABLE IF NOT EXISTS reservations (
       id SERIAL PRIMARY KEY,
       created_at TIMESTAMPTZ NOT NULL DEFAULT now(),
+      service_type TEXT NOT NULL DEFAULT '',
       space_type TEXT NOT NULL,
       size TEXT NOT NULL,
       budget TEXT NOT NULL,
@@ -20,5 +21,8 @@ export async function ensureReservationsTable() {
   `;
   await sql`
     ALTER TABLE reservations ADD COLUMN IF NOT EXISTS status TEXT NOT NULL DEFAULT '접수'
+  `;
+  await sql`
+    ALTER TABLE reservations ADD COLUMN IF NOT EXISTS service_type TEXT NOT NULL DEFAULT ''
   `;
 }

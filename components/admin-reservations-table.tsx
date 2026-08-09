@@ -84,6 +84,7 @@ export function AdminReservationsTable({
         <thead>
           <tr className="border-b border-line text-mute">
             <th className="py-3 pr-4 font-medium">신청일시</th>
+            <th className="py-3 pr-4 font-medium">서비스</th>
             <th className="py-3 pr-4 font-medium">이름</th>
             <th className="py-3 pr-4 font-medium">연락처</th>
             <th className="py-3 pr-4 font-medium">공간 유형</th>
@@ -101,6 +102,7 @@ export function AdminReservationsTable({
               <td className="py-3 pr-4 whitespace-nowrap">
                 {formatDate(r.created_at)}
               </td>
+              <td className="py-3 pr-4">{r.service_type || "-"}</td>
               <td className="py-3 pr-4 font-medium">{r.name}</td>
               <td className="py-3 pr-4">{r.contact}</td>
               <td className="py-3 pr-4">{r.space_type}</td>

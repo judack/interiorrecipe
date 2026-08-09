@@ -3,10 +3,19 @@ import { ensureReservationsTable, sql } from "@/lib/db";
 
 export async function POST(request: Request) {
   const body = await request.json();
-  const { spaceType, size, budget, styles, pains, name, contact, message } =
-    body;
+  const {
+    serviceType,
+    spaceType,
+    size,
+    budget,
+    styles,
+    pains,
+    name,
+    contact,
+    message,
+  } = body;
 
-  if (!spaceType || !size || !budget || !name || !contact) {
+  if (!serviceType || !spaceType || !size || !budget || !name || !contact) {
     return NextResponse.json(
       { error: "필수 항목이 비어 있습니다." },
       { status: 400 }
@@ -16,8 +25,9 @@ export async function POST(request: Request) {
   await ensureReservationsTable();
 
   await sql`
-    INSERT INTO reservations (space_type, size, budget, styles, pains, name, contact, message)
+    INSERT INTO reservations (service_type, space_type, size, budget, styles, pains, name, contact, message)
     VALUES (
+      ${serviceType},
       ${spaceType},
       ${size},
       ${budget},

@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { SITE } from "@/lib/site-config";
 
+const SERVICE_TYPES = ["유료", "무료"];
 const SPACE_TYPES = ["원룸", "투룸", "아파트", "기타"];
 const SIZES = ["6평 이하", "6~10평", "10~20평", "20평 이상"];
 const BUDGETS = ["100만원 이하", "300만원 이하", "500만원 이하", "1000만원 이상"];
@@ -10,6 +11,7 @@ const STYLES = ["미니멀", "모던", "북유럽", "빈티지", "기타"];
 const PAINS = ["수납 부족", "가구 배치", "좁아 보임", "기타"];
 
 type FormState = {
+  serviceType: string;
   spaceType: string;
   size: string;
   budget: string;
@@ -21,6 +23,7 @@ type FormState = {
 };
 
 const INITIAL_STATE: FormState = {
+  serviceType: "",
   spaceType: "",
   size: "",
   budget: "",
@@ -68,7 +71,8 @@ export function ReservationForm() {
     "idle" | "submitting" | "success" | "error"
   >("idle");
 
-  const step1Done = form.spaceType && form.size && form.budget;
+  const step1Done =
+    form.serviceType && form.spaceType && form.size && form.budget;
   const step3Done = form.name.trim() && form.contact.trim();
 
   async function handleSubmit() {
@@ -87,6 +91,7 @@ export function ReservationForm() {
   }
 
   const summaryLines = [
+    `서비스 종류: ${form.serviceType}`,
     `공간 유형: ${form.spaceType}`,
     `평수: ${form.size}`,
     `예산: ${form.budget}`,
@@ -110,7 +115,25 @@ export function ReservationForm() {
       {step === 1 && (
         <div className="mt-4 flex flex-col gap-8">
           <div>
-            <p className="text-base font-medium">공간 유형이 어떻게 되나요?</p>
+            <p className="text-base font-medium">
+              Q) 어떤 서비스를 원하시나요?
+            </p>
+            <div className="mt-4 flex flex-wrap gap-2">
+              {SERVICE_TYPES.map((v) => (
+                <Choice
+                  key={v}
+                  label={v}
+                  active={form.serviceType === v}
+                  onClick={() =>
+                    setForm((prev) => ({ ...prev, serviceType: v }))
+                  }
+                />
+              ))}
+            </div>
+          </div>
+
+          <div>
+            <p className="text-base font-medium">Q) 공간 유형이 어떻게 되나요?</p>
             <div className="mt-4 flex flex-wrap gap-2">
               {SPACE_TYPES.map((v) => (
                 <Choice
@@ -124,7 +147,7 @@ export function ReservationForm() {
           </div>
 
           <div>
-            <p className="text-base font-medium">평수는 어느 정도인가요?</p>
+            <p className="text-base font-medium">Q) 평수는 어느 정도인가요?</p>
             <div className="mt-4 flex flex-wrap gap-2">
               {SIZES.map((v) => (
                 <Choice
@@ -138,7 +161,7 @@ export function ReservationForm() {
           </div>
 
           <div>
-            <p className="text-base font-medium">예산은 어느 정도로 생각하세요?</p>
+            <p className="text-base font-medium">Q) 예산은 어느 정도로 생각하세요?</p>
             <div className="mt-4 flex flex-wrap gap-2">
               {BUDGETS.map((v) => (
                 <Choice
@@ -166,7 +189,7 @@ export function ReservationForm() {
         <div className="mt-4 flex flex-col gap-8">
           <div>
             <p className="text-base font-medium">
-              선호하는 스타일이 있나요? (선택, 여러 개 가능)
+              Q) 선호하는 스타일이 있나요? (선택, 여러 개 가능)
             </p>
             <div className="mt-4 flex flex-wrap gap-2">
               {STYLES.map((v) => (
@@ -187,7 +210,7 @@ export function ReservationForm() {
 
           <div>
             <p className="text-base font-medium">
-              지금 불편한 점이 있나요? (선택, 여러 개 가능)
+              Q) 지금 불편한 점이 있나요? (선택, 여러 개 가능)
             </p>
             <div className="mt-4 flex flex-wrap gap-2">
               {PAINS.map((v) => (
@@ -229,7 +252,7 @@ export function ReservationForm() {
         <div className="mt-4 flex flex-col gap-6">
           <div>
             <label className="text-base font-medium" htmlFor="name">
-              이름
+              Q) 이름이 무엇인가요?
             </label>
             <input
               id="name"
@@ -244,7 +267,7 @@ export function ReservationForm() {
 
           <div>
             <label className="text-base font-medium" htmlFor="contact">
-              연락처 (전화번호 또는 이메일)
+              Q) 연락처가 어떻게 되나요? (전화번호 또는 이메일)
             </label>
             <input
               id="contact"
@@ -259,7 +282,7 @@ export function ReservationForm() {
 
           <div>
             <label className="text-base font-medium" htmlFor="message">
-              요청사항 (선택)
+              Q) 추가로 전달하고 싶은 내용이 있나요? (선택)
             </label>
             <textarea
               id="message"
