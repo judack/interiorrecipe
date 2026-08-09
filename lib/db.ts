@@ -14,20 +14,11 @@ export async function ensureReservationsTable() {
       pains TEXT NOT NULL,
       name TEXT NOT NULL,
       contact TEXT NOT NULL,
-      message TEXT
+      message TEXT,
+      status TEXT NOT NULL DEFAULT '접수'
     )
   `;
+  await sql`
+    ALTER TABLE reservations ADD COLUMN IF NOT EXISTS status TEXT NOT NULL DEFAULT '접수'
+  `;
 }
-
-export type Reservation = {
-  id: number;
-  created_at: string;
-  space_type: string;
-  size: string;
-  budget: string;
-  styles: string;
-  pains: string;
-  name: string;
-  contact: string;
-  message: string | null;
-};
