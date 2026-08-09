@@ -64,9 +64,27 @@ function toggleInList(list: string[], value: string) {
 export function ReservationForm() {
   const [step, setStep] = useState(1);
   const [form, setForm] = useState<FormState>(INITIAL_STATE);
+  const [status, setStatus] = useState<
+    "idle" | "submitting" | "success" | "error"
+  >("idle");
 
   const step1Done = form.spaceType && form.size && form.budget;
   const step3Done = form.name.trim() && form.contact.trim();
+
+  async function handleSubmit() {
+    setStatus("submitting");
+    try {
+      const res = await fetch("/api/reservations", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(form),
+      });
+      if (!res.ok) throw new Error("submit failed");
+      setStatus("success");
+    } catch {
+      setStatus("error");
+    }
+  }
 
   const summaryLines = [
     `공간 유형: ${form.spaceType}`,
@@ -275,7 +293,25 @@ export function ReservationForm() {
         </div>
       )}
 
-      {step === 4 && (
+      {step === 4 && status === "success" && (
+        <div className="mt-4 flex flex-col gap-4">
+          <p className="text-xl font-semibold tracking-tight">
+            신청이 접수됐어요.
+          </p>
+          <p className="text-base text-mute">
+            빠르게 확인하고 연락드릴게요. 사진이 있으시면 아래 주소로
+            보내주세요.
+          </p>
+          <a
+            href={mailtoHref}
+            className="self-start rounded-full border border-line px-6 py-3 text-sm font-medium text-ink hover:bg-mist"
+          >
+            사진 보내기 (이메일 열기)
+          </a>
+        </div>
+      )}
+
+      {step === 4 && status !== "success" && (
         <div className="mt-4 flex flex-col gap-6">
           <p className="text-base font-medium">입력하신 내용을 확인해주세요</p>
 
@@ -297,10 +333,17 @@ export function ReservationForm() {
           </div>
 
           <p className="text-sm text-mute">
-            사진이 있으시면, 신청 후 열리는 메일에 직접 첨부해서 보내주세요.
+            사진이 있으시면, 신청 완료 후 안내되는 주소로 보내주세요.
           </p>
 
-          <div className="flex gap-3">
+          {status === "error" && (
+            <p className="text-sm text-red-600">
+              전송에 문제가 생겼어요. 다시 시도해주시거나, 아래로 바로
+              이메일을 보내주세요.
+            </p>
+          )}
+
+          <div className="flex flex-wrap gap-3">
             <button
               type="button"
               onClick={() => setStep(3)}
@@ -308,12 +351,22 @@ export function ReservationForm() {
             >
               이전
             </button>
-            <a
-              href={mailtoHref}
-              className="rounded-full bg-ink px-8 py-3 text-sm font-medium text-paper transition-opacity hover:opacity-80"
+            <button
+              type="button"
+              disabled={status === "submitting"}
+              onClick={handleSubmit}
+              className="rounded-full bg-ink px-8 py-3 text-sm font-medium text-paper transition-opacity hover:opacity-80 disabled:opacity-40"
             >
-              상담 신청 보내기
-            </a>
+              {status === "submitting" ? "보내는 중..." : "상담 신청 보내기"}
+            </button>
+            {status === "error" && (
+              <a
+                href={mailtoHref}
+                className="rounded-full border border-line px-8 py-3 text-sm font-medium text-ink hover:bg-mist"
+              >
+                이메일로 바로 보내기
+              </a>
+            )}
           </div>
         </div>
       )}
