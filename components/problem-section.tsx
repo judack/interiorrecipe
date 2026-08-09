@@ -14,7 +14,7 @@ export function ProblemSection() {
           <p className="text-xs font-medium tracking-[0.2em] text-mute uppercase">
             Problem
           </p>
-          <h2 className="mt-6 max-w-2xl text-3xl font-semibold tracking-tight md:text-5xl">
+          <h2 className="mt-6 max-w-2xl text-3xl font-semibold tracking-tight leading-[1.44] md:text-5xl md:leading-[1.2]">
             많은 원룸이
             <br />
             같은 문제를 겪습니다

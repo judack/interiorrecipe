@@ -13,7 +13,7 @@ export function SolutionSection() {
           <p className="text-xs font-medium tracking-[0.2em] text-mute uppercase">
             Solution
           </p>
-          <h2 className="mt-6 max-w-2xl text-3xl font-semibold tracking-tight md:text-5xl">
+          <h2 className="mt-6 max-w-2xl text-3xl font-semibold tracking-tight leading-[1.44] md:text-5xl md:leading-[1.2]">
             정보를 알려주시면,
             <br />
             공간이 답이 됩니다
