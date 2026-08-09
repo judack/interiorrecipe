@@ -1,0 +1,322 @@
+"use client";
+
+import { useState } from "react";
+import { SITE } from "@/lib/site-config";
+
+const SPACE_TYPES = ["원룸", "투룸", "아파트", "기타"];
+const SIZES = ["6평 이하", "6~10평", "10~20평", "20평 이상"];
+const BUDGETS = ["100만원 이하", "300만원 이하", "500만원 이하", "1000만원 이상"];
+const STYLES = ["미니멀", "모던", "북유럽", "빈티지", "기타"];
+const PAINS = ["수납 부족", "가구 배치", "좁아 보임", "기타"];
+
+type FormState = {
+  spaceType: string;
+  size: string;
+  budget: string;
+  styles: string[];
+  pains: string[];
+  name: string;
+  contact: string;
+  message: string;
+};
+
+const INITIAL_STATE: FormState = {
+  spaceType: "",
+  size: "",
+  budget: "",
+  styles: [],
+  pains: [],
+  name: "",
+  contact: "",
+  message: "",
+};
+
+function Choice({
+  label,
+  active,
+  onClick,
+}: {
+  label: string;
+  active: boolean;
+  onClick: () => void;
+}) {
+  return (
+    <button
+      type="button"
+      onClick={onClick}
+      className={`rounded-full border px-5 py-2.5 text-sm font-medium transition-colors ${
+        active
+          ? "border-ink bg-ink text-paper"
+          : "border-line text-ink hover:bg-mist"
+      }`}
+    >
+      {label}
+    </button>
+  );
+}
+
+function toggleInList(list: string[], value: string) {
+  return list.includes(value)
+    ? list.filter((v) => v !== value)
+    : [...list, value];
+}
+
+export function ReservationForm() {
+  const [step, setStep] = useState(1);
+  const [form, setForm] = useState<FormState>(INITIAL_STATE);
+
+  const step1Done = form.spaceType && form.size && form.budget;
+  const step3Done = form.name.trim() && form.contact.trim();
+
+  const summaryLines = [
+    `공간 유형: ${form.spaceType}`,
+    `평수: ${form.size}`,
+    `예산: ${form.budget}`,
+    `선호 스타일: ${form.styles.length ? form.styles.join(", ") : "선택 안 함"}`,
+    `불편한 점: ${form.pains.length ? form.pains.join(", ") : "선택 안 함"}`,
+    `이름: ${form.name}`,
+    `연락처: ${form.contact}`,
+    `요청사항: ${form.message || "없음"}`,
+  ];
+
+  const mailtoHref = `${SITE.contactHref}?subject=${encodeURIComponent(
+    `[상담 신청] ${form.name || "고객"}님`
+  )}&body=${encodeURIComponent(
+    `${summaryLines.join("\n")}\n\n(사진이 있으시면 이 메일에 직접 첨부해서 보내주세요.)`
+  )}`;
+
+  return (
+    <div className="mt-12">
+      <p className="text-sm text-mute">{step} / 4</p>
+
+      {step === 1 && (
+        <div className="mt-4 flex flex-col gap-8">
+          <div>
+            <p className="text-base font-medium">공간 유형이 어떻게 되나요?</p>
+            <div className="mt-4 flex flex-wrap gap-2">
+              {SPACE_TYPES.map((v) => (
+                <Choice
+                  key={v}
+                  label={v}
+                  active={form.spaceType === v}
+                  onClick={() => setForm((prev) => ({ ...prev, spaceType: v }))}
+                />
+              ))}
+            </div>
+          </div>
+
+          <div>
+            <p className="text-base font-medium">평수는 어느 정도인가요?</p>
+            <div className="mt-4 flex flex-wrap gap-2">
+              {SIZES.map((v) => (
+                <Choice
+                  key={v}
+                  label={v}
+                  active={form.size === v}
+                  onClick={() => setForm((prev) => ({ ...prev, size: v }))}
+                />
+              ))}
+            </div>
+          </div>
+
+          <div>
+            <p className="text-base font-medium">예산은 어느 정도로 생각하세요?</p>
+            <div className="mt-4 flex flex-wrap gap-2">
+              {BUDGETS.map((v) => (
+                <Choice
+                  key={v}
+                  label={v}
+                  active={form.budget === v}
+                  onClick={() => setForm((prev) => ({ ...prev, budget: v }))}
+                />
+              ))}
+            </div>
+          </div>
+
+          <button
+            type="button"
+            disabled={!step1Done}
+            onClick={() => setStep(2)}
+            className="self-start rounded-full bg-ink px-8 py-3 text-sm font-medium text-paper transition-opacity disabled:opacity-30"
+          >
+            다음
+          </button>
+        </div>
+      )}
+
+      {step === 2 && (
+        <div className="mt-4 flex flex-col gap-8">
+          <div>
+            <p className="text-base font-medium">
+              선호하는 스타일이 있나요? (선택, 여러 개 가능)
+            </p>
+            <div className="mt-4 flex flex-wrap gap-2">
+              {STYLES.map((v) => (
+                <Choice
+                  key={v}
+                  label={v}
+                  active={form.styles.includes(v)}
+                  onClick={() =>
+                    setForm((prev) => ({
+                      ...prev,
+                      styles: toggleInList(prev.styles, v),
+                    }))
+                  }
+                />
+              ))}
+            </div>
+          </div>
+
+          <div>
+            <p className="text-base font-medium">
+              지금 불편한 점이 있나요? (선택, 여러 개 가능)
+            </p>
+            <div className="mt-4 flex flex-wrap gap-2">
+              {PAINS.map((v) => (
+                <Choice
+                  key={v}
+                  label={v}
+                  active={form.pains.includes(v)}
+                  onClick={() =>
+                    setForm((prev) => ({
+                      ...prev,
+                      pains: toggleInList(prev.pains, v),
+                    }))
+                  }
+                />
+              ))}
+            </div>
+          </div>
+
+          <div className="flex gap-3">
+            <button
+              type="button"
+              onClick={() => setStep(1)}
+              className="rounded-full border border-line px-8 py-3 text-sm font-medium text-ink"
+            >
+              이전
+            </button>
+            <button
+              type="button"
+              onClick={() => setStep(3)}
+              className="rounded-full bg-ink px-8 py-3 text-sm font-medium text-paper"
+            >
+              다음
+            </button>
+          </div>
+        </div>
+      )}
+
+      {step === 3 && (
+        <div className="mt-4 flex flex-col gap-6">
+          <div>
+            <label className="text-base font-medium" htmlFor="name">
+              이름
+            </label>
+            <input
+              id="name"
+              value={form.name}
+              onChange={(e) =>
+                setForm((prev) => ({ ...prev, name: e.target.value }))
+              }
+              className="mt-3 w-full rounded-xl border border-line bg-paper px-4 py-3 text-base outline-none focus:border-ink"
+              placeholder="홍길동"
+            />
+          </div>
+
+          <div>
+            <label className="text-base font-medium" htmlFor="contact">
+              연락처 (전화번호 또는 이메일)
+            </label>
+            <input
+              id="contact"
+              value={form.contact}
+              onChange={(e) =>
+                setForm((prev) => ({ ...prev, contact: e.target.value }))
+              }
+              className="mt-3 w-full rounded-xl border border-line bg-paper px-4 py-3 text-base outline-none focus:border-ink"
+              placeholder="010-0000-0000"
+            />
+          </div>
+
+          <div>
+            <label className="text-base font-medium" htmlFor="message">
+              요청사항 (선택)
+            </label>
+            <textarea
+              id="message"
+              value={form.message}
+              onChange={(e) =>
+                setForm((prev) => ({ ...prev, message: e.target.value }))
+              }
+              rows={4}
+              className="mt-3 w-full rounded-xl border border-line bg-paper px-4 py-3 text-base outline-none focus:border-ink"
+              placeholder="추가로 전달하고 싶은 내용을 적어주세요."
+            />
+          </div>
+
+          <div className="flex gap-3">
+            <button
+              type="button"
+              onClick={() => setStep(2)}
+              className="rounded-full border border-line px-8 py-3 text-sm font-medium text-ink"
+            >
+              이전
+            </button>
+            <button
+              type="button"
+              disabled={!step3Done}
+              onClick={() => setStep(4)}
+              className="rounded-full bg-ink px-8 py-3 text-sm font-medium text-paper disabled:opacity-30"
+            >
+              다음
+            </button>
+          </div>
+        </div>
+      )}
+
+      {step === 4 && (
+        <div className="mt-4 flex flex-col gap-6">
+          <p className="text-base font-medium">입력하신 내용을 확인해주세요</p>
+
+          <div className="rounded-2xl border border-line p-6">
+            <dl className="flex flex-col gap-3">
+              {summaryLines.map((line) => {
+                const [label, ...rest] = line.split(": ");
+                return (
+                  <div
+                    key={label}
+                    className="flex flex-col gap-1 border-b border-line pb-3 last:border-b-0 last:pb-0 md:flex-row md:justify-between"
+                  >
+                    <dt className="text-sm text-mute">{label}</dt>
+                    <dd className="text-sm font-medium">{rest.join(": ")}</dd>
+                  </div>
+                );
+              })}
+            </dl>
+          </div>
+
+          <p className="text-sm text-mute">
+            사진이 있으시면, 신청 후 열리는 메일에 직접 첨부해서 보내주세요.
+          </p>
+
+          <div className="flex gap-3">
+            <button
+              type="button"
+              onClick={() => setStep(3)}
+              className="rounded-full border border-line px-8 py-3 text-sm font-medium text-ink"
+            >
+              이전
+            </button>
+            <a
+              href={mailtoHref}
+              className="rounded-full bg-ink px-8 py-3 text-sm font-medium text-paper transition-opacity hover:opacity-80"
+            >
+              상담 신청 보내기
+            </a>
+          </div>
+        </div>
+      )}
+    </div>
+  );
+}

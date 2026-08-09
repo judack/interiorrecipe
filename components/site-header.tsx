@@ -45,7 +45,7 @@ export function SiteHeader() {
             쇼핑 스토어
           </a>
           <a
-            href={SITE.contactHref}
+            href={SITE.reservationHref}
             className="rounded-full bg-ink px-5 py-2 text-sm font-medium text-paper transition-opacity hover:opacity-80"
           >
             상담 신청
@@ -95,7 +95,7 @@ export function SiteHeader() {
               쇼핑 스토어
             </a>
             <a
-              href={SITE.contactHref}
+              href={SITE.reservationHref}
               onClick={() => setOpen(false)}
               className="rounded-full bg-ink px-5 py-3 text-center text-sm font-medium text-paper"
             >

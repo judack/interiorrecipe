@@ -15,7 +15,7 @@ export function FinalCtaSection() {
 
         <Reveal delay={120}>
           <a
-            href={SITE.contactHref}
+            href={SITE.reservationHref}
             className="mt-12 inline-flex items-center rounded-full bg-paper px-8 py-4 text-base font-medium text-ink transition-opacity hover:opacity-80"
           >
             컨설팅 시작하기

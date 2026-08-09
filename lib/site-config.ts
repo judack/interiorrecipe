@@ -3,6 +3,8 @@ export const SITE = {
   // 실제 상담 신청 채널(이메일, 폼, 카카오톡 채널 등)이 정해지면 이 값만 바꿔주세요.
   // 모든 상담 신청 버튼이 이 링크 하나를 함께 사용합니다.
   contactHref: "mailto:hello@interiorrecipe.kr",
+  // 상담 신청 버튼들이 연결되는 체크리스트 폼 경로입니다.
+  reservationHref: "/reservation",
   // public/videos/hero.mp4 자리에 영상 파일을 넣으면 히어로 배경으로 바로 재생됩니다.
   // 자동재생 조건상 소리가 없는(무음) mp4여야 하며, 10~20MB 이하로 압축하는 걸 권장합니다.
   heroVideoSrc: "/videos/hero.mp4",
