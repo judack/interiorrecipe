@@ -9,7 +9,7 @@ export function SiteHeader() {
   return (
     <header className="fixed top-0 z-50 w-full border-b border-line/70 bg-paper/80 backdrop-blur-md">
       <div className="mx-auto flex h-16 max-w-6xl items-center justify-between px-6 md:px-10">
-        <a href="#top" className="flex items-center gap-2">
+        <a href="/#top" className="flex items-center gap-2">
           <img
             src={SITE.logoSrc}
             alt=""
