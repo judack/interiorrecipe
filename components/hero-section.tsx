@@ -27,7 +27,7 @@ export function HeroSection() {
         </Reveal>
 
         <Reveal delay={80}>
-          <h1 className="mt-6 max-w-4xl text-[2.5rem] leading-[1.15] font-semibold tracking-tight text-white md:text-6xl lg:text-7xl">
+          <h1 className="mt-6 max-w-4xl text-[2rem] leading-[1.2] font-semibold tracking-tight text-white md:text-6xl lg:text-7xl">
             내 방, 어떻게 꾸며야 할지
             <br />
             모르겠다면?
