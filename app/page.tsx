@@ -1,4 +1,5 @@
 import { SiteHeader } from "@/components/site-header";
+import { SocialQuickMenu } from "@/components/social-quick-menu";
 import { HeroSection } from "@/components/hero-section";
 import { ProblemSection } from "@/components/problem-section";
 import { SolutionSection } from "@/components/solution-section";
@@ -12,6 +13,7 @@ export default function Home() {
   return (
     <>
       <SiteHeader />
+      <SocialQuickMenu />
       <main>
         <HeroSection />
         <ProblemSection />

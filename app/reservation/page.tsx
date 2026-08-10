@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { SiteHeader } from "@/components/site-header";
 import { SiteFooter } from "@/components/site-footer";
+import { SocialQuickMenu } from "@/components/social-quick-menu";
 import { ReservationForm } from "@/components/reservation-form";
 
 export const metadata: Metadata = {
@@ -12,6 +13,7 @@ export default function ReservationPage() {
   return (
     <>
       <SiteHeader />
+      <SocialQuickMenu />
       <main className="px-6 pt-32 pb-24 md:px-10 md:pt-40 md:pb-32">
         <div className="mx-auto max-w-xl">
           <p className="text-xs font-medium tracking-[0.2em] text-mute uppercase">

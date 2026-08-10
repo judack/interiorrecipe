@@ -15,6 +15,12 @@ export const SITE = {
   logoSrc: "/logo.png",
 };
 
+export const SOCIAL_LINKS = {
+  instagram: "https://www.instagram.com/interior_recipe.zip",
+  youtube: "https://www.youtube.com/@interior_recipe",
+  kakao: "https://pf.kakao.com/_xjLaTn",
+};
+
 export const NAV_LINKS = [
   { href: "/#problem", label: "문제" },
   { href: "/#solution", label: "솔루션" },
