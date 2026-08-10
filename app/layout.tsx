@@ -1,5 +1,12 @@
 import type { Metadata } from "next";
+import { Nanum_Myeongjo } from "next/font/google";
 import "./globals.css";
+
+const nanumMyeongjo = Nanum_Myeongjo({
+  subsets: ["latin"],
+  weight: ["400", "700", "800"],
+  variable: "--font-display",
+});
 
 export const metadata: Metadata = {
   title: "인테리어레시피 | 내 방에 맞는 인테리어 솔루션",
@@ -9,7 +16,10 @@ export const metadata: Metadata = {
 
 export default function RootLayout({ children }: LayoutProps<"/">) {
   return (
-    <html lang="ko" className="h-full antialiased">
+    <html
+      lang="ko"
+      className={`h-full antialiased ${nanumMyeongjo.variable}`}
+    >
       <body className="min-h-full bg-paper text-ink">{children}</body>
     </html>
   );

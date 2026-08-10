@@ -19,7 +19,10 @@ export function BrandSection() {
             <br />
             현실적인 공간 솔루션
           </h2>
-          <p className="mt-6 max-w-md text-lg leading-relaxed text-mute">
+          <p className="mt-6 max-w-md font-display text-xl leading-snug font-bold text-ink">
+            좋은 공간에도 레시피가 있습니다.
+          </p>
+          <p className="mt-4 max-w-md text-lg leading-relaxed text-mute">
             인테리어레시피는 혼자 사는 사람들, 2030세대의 방을 위한
             서비스입니다. 넓은 평수나 값비싼 가구가 아니라, 지금 있는
             공간을 가장 잘 쓰는 방법을 제안합니다.
