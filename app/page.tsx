@@ -4,10 +4,12 @@ import { HeroSection } from "@/components/hero-section";
 import { ProblemSection } from "@/components/problem-section";
 import { SolutionSection } from "@/components/solution-section";
 import { ProcessSection } from "@/components/process-section";
-import { BeforeAfterSection } from "@/components/before-after-section";
+import { FeaturedProductsSection } from "@/components/featured-products-section";
 import { BrandSection } from "@/components/brand-section";
 import { FinalCtaSection } from "@/components/final-cta-section";
 import { SiteFooter } from "@/components/site-footer";
+
+export const dynamic = "force-dynamic";
 
 export default function Home() {
   return (
@@ -19,7 +21,7 @@ export default function Home() {
         <ProblemSection />
         <SolutionSection />
         <ProcessSection />
-        <BeforeAfterSection />
+        <FeaturedProductsSection />
         <BrandSection />
         <FinalCtaSection />
       </main>

@@ -25,6 +25,6 @@ export const NAV_LINKS = [
   { href: "/#problem", label: "문제" },
   { href: "/#solution", label: "솔루션" },
   { href: "/#process", label: "프로세스" },
-  { href: "/#before-after", label: "사례" },
+  { href: "/#featured", label: "추천 가구" },
   { href: "/#brand", label: "브랜드" },
 ];
