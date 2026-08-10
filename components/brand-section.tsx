@@ -14,7 +14,7 @@ export function BrandSection() {
           <p className="text-xs font-medium tracking-[0.2em] text-mute uppercase">
             Brand
           </p>
-          <h2 className="mt-6 max-w-md text-3xl font-semibold tracking-tight md:text-5xl">
+          <h2 className="mt-6 max-w-md text-3xl font-semibold tracking-tight leading-[1.44] md:text-5xl md:leading-[1.2]">
             1인 가구를 위한,
             <br />
             현실적인 공간 솔루션
