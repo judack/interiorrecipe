@@ -6,9 +6,18 @@ import { SITE } from "@/lib/site-config";
 const SERVICE_TYPES = ["유료", "무료"];
 const SPACE_TYPES = ["원룸", "투룸", "아파트", "기타"];
 const SIZES = ["6평 이하", "6~10평", "10~20평", "20평 이상"];
-const BUDGETS = ["100만원 이하", "300만원 이하", "500만원 이하", "1000만원 이상"];
+const PAID_TIERS = [
+  { size: "12평 이하", price: "50만원" },
+  { size: "12~15평(복층포함)", price: "100만원" },
+  { size: "15평 이상", price: "추후협의" },
+];
 const STYLES = ["미니멀", "모던", "북유럽", "빈티지", "기타"];
 const PAINS = ["수납 부족", "가구 배치", "좁아 보임", "기타"];
+
+function tomorrowDateString() {
+  const d = new Date(Date.now() + 24 * 60 * 60 * 1000);
+  return d.toISOString().slice(0, 10);
+}
 
 type FormState = {
   serviceType: string;
@@ -20,6 +29,7 @@ type FormState = {
   name: string;
   contact: string;
   message: string;
+  visitDate: string;
 };
 
 const INITIAL_STATE: FormState = {
@@ -32,6 +42,7 @@ const INITIAL_STATE: FormState = {
   name: "",
   contact: "",
   message: "",
+  visitDate: "",
 };
 
 function Choice({
@@ -75,6 +86,19 @@ export function ReservationForm() {
     form.serviceType && form.spaceType && form.size && form.budget;
   const step3Done = form.name.trim() && form.contact.trim();
 
+  function selectServiceType(value: string) {
+    setForm((prev) => ({
+      ...prev,
+      serviceType: value,
+      size: "",
+      budget: value === "무료" ? "무료 상담" : "",
+    }));
+  }
+
+  function selectPaidTier(tier: { size: string; price: string }) {
+    setForm((prev) => ({ ...prev, size: tier.size, budget: tier.price }));
+  }
+
   async function handleSubmit() {
     setStatus("submitting");
     try {
@@ -94,11 +118,12 @@ export function ReservationForm() {
     `서비스 종류: ${form.serviceType}`,
     `공간 유형: ${form.spaceType}`,
     `평수: ${form.size}`,
-    `예산: ${form.budget}`,
+    `요금: ${form.budget}`,
     `선호 스타일: ${form.styles.length ? form.styles.join(", ") : "선택 안 함"}`,
     `불편한 점: ${form.pains.length ? form.pains.join(", ") : "선택 안 함"}`,
     `이름: ${form.name}`,
     `연락처: ${form.contact}`,
+    `방문 희망일: ${form.visitDate || "미정"}`,
     `요청사항: ${form.message || "없음"}`,
   ];
 
@@ -124,9 +149,7 @@ export function ReservationForm() {
                   key={v}
                   label={v}
                   active={form.serviceType === v}
-                  onClick={() =>
-                    setForm((prev) => ({ ...prev, serviceType: v }))
-                  }
+                  onClick={() => selectServiceType(v)}
                 />
               ))}
             </div>
@@ -146,33 +169,37 @@ export function ReservationForm() {
             </div>
           </div>
 
-          <div>
-            <p className="text-base font-medium">Q) 평수는 어느 정도인가요?</p>
-            <div className="mt-4 flex flex-wrap gap-2">
-              {SIZES.map((v) => (
-                <Choice
-                  key={v}
-                  label={v}
-                  active={form.size === v}
-                  onClick={() => setForm((prev) => ({ ...prev, size: v }))}
-                />
-              ))}
+          {form.serviceType === "유료" ? (
+            <div>
+              <p className="text-base font-medium">
+                Q) 공간 규모별 요금을 선택해주세요
+              </p>
+              <div className="mt-4 flex flex-wrap gap-2">
+                {PAID_TIERS.map((tier) => (
+                  <Choice
+                    key={tier.size}
+                    label={`${tier.size} · ${tier.price}`}
+                    active={form.size === tier.size}
+                    onClick={() => selectPaidTier(tier)}
+                  />
+                ))}
+              </div>
             </div>
-          </div>
-
-          <div>
-            <p className="text-base font-medium">Q) 예산은 어느 정도로 생각하세요?</p>
-            <div className="mt-4 flex flex-wrap gap-2">
-              {BUDGETS.map((v) => (
-                <Choice
-                  key={v}
-                  label={v}
-                  active={form.budget === v}
-                  onClick={() => setForm((prev) => ({ ...prev, budget: v }))}
-                />
-              ))}
+          ) : (
+            <div>
+              <p className="text-base font-medium">Q) 평수는 어느 정도인가요?</p>
+              <div className="mt-4 flex flex-wrap gap-2">
+                {SIZES.map((v) => (
+                  <Choice
+                    key={v}
+                    label={v}
+                    active={form.size === v}
+                    onClick={() => setForm((prev) => ({ ...prev, size: v }))}
+                  />
+                ))}
+              </div>
             </div>
-          </div>
+          )}
 
           <button
             type="button"
@@ -277,6 +304,22 @@ export function ReservationForm() {
               }
               className="mt-3 w-full rounded-xl border border-line bg-paper px-4 py-3 text-base outline-none focus:border-ink"
               placeholder="010-0000-0000"
+            />
+          </div>
+
+          <div>
+            <label className="text-base font-medium" htmlFor="visitDate">
+              Q) 방문 상담 날짜를 선택해주세요 (선택)
+            </label>
+            <input
+              id="visitDate"
+              type="date"
+              min={tomorrowDateString()}
+              value={form.visitDate}
+              onChange={(e) =>
+                setForm((prev) => ({ ...prev, visitDate: e.target.value }))
+              }
+              className="mt-3 w-full rounded-xl border border-line bg-paper px-4 py-3 text-base outline-none focus:border-ink"
             />
           </div>
 

@@ -13,6 +13,7 @@ export async function POST(request: Request) {
     name,
     contact,
     message,
+    visitDate,
   } = body;
 
   if (!serviceType || !spaceType || !size || !budget || !name || !contact) {
@@ -25,7 +26,7 @@ export async function POST(request: Request) {
   await ensureReservationsTable();
 
   await sql`
-    INSERT INTO reservations (service_type, space_type, size, budget, styles, pains, name, contact, message)
+    INSERT INTO reservations (service_type, space_type, size, budget, styles, pains, name, contact, message, visit_date)
     VALUES (
       ${serviceType},
       ${spaceType},
@@ -35,7 +36,8 @@ export async function POST(request: Request) {
       ${Array.isArray(pains) ? pains.join(", ") : ""},
       ${name},
       ${contact},
-      ${message || null}
+      ${message || null},
+      ${visitDate || null}
     )
   `;
 

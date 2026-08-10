@@ -13,5 +13,6 @@ export type Reservation = {
   name: string;
   contact: string;
   message: string | null;
+  visit_date: string | null;
   status: ReservationStatus;
 };
