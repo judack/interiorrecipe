@@ -31,6 +31,12 @@ export async function ensureReservationsTable() {
   await sql`
     ALTER TABLE reservations ADD COLUMN IF NOT EXISTS furniture_budget TEXT NOT NULL DEFAULT ''
   `;
+  await sql`
+    ALTER TABLE reservations ADD COLUMN IF NOT EXISTS region TEXT NOT NULL DEFAULT ''
+  `;
+  await sql`
+    ALTER TABLE reservations ADD COLUMN IF NOT EXISTS address_detail TEXT
+  `;
 }
 
 export async function ensureProductsTable() {

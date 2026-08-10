@@ -13,6 +13,8 @@ export type Reservation = {
   pains: string;
   name: string;
   contact: string;
+  region: string;
+  address_detail: string | null;
   message: string | null;
   visit_date: string | null;
   status: ReservationStatus;

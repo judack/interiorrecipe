@@ -17,6 +17,25 @@ const FURNITURE_BUDGETS = [
   "500~1000만원 이하",
   "1000만원 이상",
 ];
+const REGIONS = [
+  "서울",
+  "경기",
+  "인천",
+  "부산",
+  "대구",
+  "광주",
+  "대전",
+  "울산",
+  "세종",
+  "강원",
+  "충북",
+  "충남",
+  "전북",
+  "전남",
+  "경북",
+  "경남",
+  "제주",
+];
 const STYLES = ["미니멀", "모던", "북유럽", "빈티지", "기타"];
 const PAINS = ["수납 부족", "가구 배치", "좁아 보임", "기타"];
 
@@ -35,6 +54,8 @@ type FormState = {
   pains: string[];
   name: string;
   contact: string;
+  region: string;
+  addressDetail: string;
   message: string;
   visitDate: string;
   privacyAgreed: boolean;
@@ -50,6 +71,8 @@ const INITIAL_STATE: FormState = {
   pains: [],
   name: "",
   contact: "",
+  region: "",
+  addressDetail: "",
   message: "",
   visitDate: "",
   privacyAgreed: false,
@@ -98,7 +121,8 @@ export function ReservationForm() {
     form.size &&
     form.budget &&
     form.furnitureBudget;
-  const step3Done = form.name.trim() && form.contact.trim();
+  const step3Done =
+    form.name.trim() && form.contact.trim() && form.region;
 
   function selectServiceType(value: string) {
     setForm((prev) => ({
@@ -138,6 +162,8 @@ export function ReservationForm() {
     `불편한 점: ${form.pains.length ? form.pains.join(", ") : "선택 안 함"}`,
     `이름: ${form.name}`,
     `연락처: ${form.contact}`,
+    `지역: ${form.region}`,
+    `상세 주소: ${form.addressDetail || "없음"}`,
     `방문 희망일: ${form.visitDate || "미정"}`,
     `요청사항: ${form.message || "없음"}`,
   ];
@@ -337,6 +363,41 @@ export function ReservationForm() {
               }
               className="mt-3 w-full rounded-xl border border-line bg-paper px-4 py-3 text-base outline-none focus:border-ink"
               placeholder="010-0000-0000"
+            />
+          </div>
+
+          <div>
+            <label className="text-base font-medium" htmlFor="region">
+              Q) 방문하실 지역을 선택해주세요
+            </label>
+            <select
+              id="region"
+              value={form.region}
+              onChange={(e) =>
+                setForm((prev) => ({ ...prev, region: e.target.value }))
+              }
+              className="mt-3 w-full rounded-xl border border-line bg-paper px-4 py-3 text-base outline-none focus:border-ink"
+            >
+              <option value="" disabled>
+                지역을 선택해주세요
+              </option>
+              {REGIONS.map((r) => (
+                <option key={r} value={r}>
+                  {r}
+                </option>
+              ))}
+            </select>
+
+            <input
+              value={form.addressDetail}
+              onChange={(e) =>
+                setForm((prev) => ({
+                  ...prev,
+                  addressDetail: e.target.value,
+                }))
+              }
+              className="mt-3 w-full rounded-xl border border-line bg-paper px-4 py-3 text-base outline-none focus:border-ink"
+              placeholder="나머지 주소를 입력해주세요 (예: 강남구 역삼동 123-45)"
             />
           </div>
 
