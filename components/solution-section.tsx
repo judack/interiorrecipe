@@ -1,7 +1,5 @@
 import { Reveal } from "@/components/reveal";
 
-const INPUTS = ["사진", "평면도", "예산"];
-
 export function SolutionSection() {
   return (
     <section
@@ -25,23 +23,20 @@ export function SolutionSection() {
         </Reveal>
 
         <Reveal delay={120}>
-          <div className="mt-20 flex flex-col items-center gap-6 md:mt-28 md:flex-row md:justify-center md:gap-8">
-            {INPUTS.map((input, i) => (
-              <div key={input} className="flex items-center gap-6 md:gap-8">
-                <div className="flex h-24 w-full min-w-40 items-center justify-center rounded-2xl border border-line bg-paper px-6 text-lg font-medium md:h-28 md:w-40">
-                  {input}
-                </div>
-                {i < INPUTS.length - 1 && (
-                  <span className="text-2xl text-mute">+</span>
-                )}
-              </div>
-            ))}
-
-            <span className="my-4 text-2xl text-mute md:my-0 md:mx-4">
-              →
-            </span>
-
-            <div className="flex h-24 w-full min-w-40 items-center justify-center rounded-2xl bg-ink px-8 text-center text-lg font-medium text-paper md:h-28 md:w-64">
+          <div className="mt-20 flex flex-col items-center gap-4 md:mt-28 md:flex-row md:justify-center md:gap-6">
+            <div className="flex h-24 w-40 items-center justify-center rounded-2xl border border-line bg-paper text-lg font-medium md:h-28">
+              사진
+            </div>
+            <span className="text-2xl text-mute">+</span>
+            <div className="flex h-24 w-40 items-center justify-center rounded-2xl border border-line bg-paper text-lg font-medium md:h-28">
+              평면도
+            </div>
+            <span className="text-2xl text-mute">+</span>
+            <div className="flex h-24 w-40 items-center justify-center rounded-2xl border border-line bg-paper text-lg font-medium md:h-28">
+              예산
+            </div>
+            <span className="text-2xl text-mute">→</span>
+            <div className="flex h-24 w-56 items-center justify-center rounded-2xl bg-ink px-4 text-center text-lg font-medium text-paper md:h-28 md:w-64">
               맞춤 공간 솔루션
             </div>
           </div>
