@@ -37,6 +37,7 @@ type FormState = {
   contact: string;
   message: string;
   visitDate: string;
+  privacyAgreed: boolean;
 };
 
 const INITIAL_STATE: FormState = {
@@ -51,6 +52,7 @@ const INITIAL_STATE: FormState = {
   contact: "",
   message: "",
   visitDate: "",
+  privacyAgreed: false,
 };
 
 function Choice({
@@ -433,6 +435,37 @@ export function ReservationForm() {
             사진이 있으시면, 신청 완료 후 안내되는 주소로 보내주세요.
           </p>
 
+          <div className="rounded-2xl border border-line bg-mist p-6">
+            <p className="text-sm font-medium">개인정보 수집·이용 동의</p>
+            <ul className="mt-3 flex flex-col gap-1.5 text-xs leading-relaxed text-mute">
+              <li>· 수집 항목: 이름, 연락처, 방문 희망일, 상담 신청 내용</li>
+              <li>
+                · 수집 목적: 상담 신청 접수 및 회신, 맞춤 공간 솔루션 제공
+              </li>
+              <li>· 보유 및 이용 기간: 수집일로부터 1년, 이후 파기</li>
+              <li>
+                · 개인정보보호법에 따라 위 정보를 처리하며, 동의를 거부할
+                권리가 있습니다. 다만 동의하지 않으실 경우 상담 신청이
+                어려울 수 있습니다.
+              </li>
+            </ul>
+
+            <label className="mt-4 flex items-center gap-2 text-sm">
+              <input
+                type="checkbox"
+                checked={form.privacyAgreed}
+                onChange={(e) =>
+                  setForm((prev) => ({
+                    ...prev,
+                    privacyAgreed: e.target.checked,
+                  }))
+                }
+                className="h-4 w-4 accent-ink"
+              />
+              [필수] 개인정보 수집 및 이용에 동의합니다.
+            </label>
+          </div>
+
           {status === "error" && (
             <p className="text-sm text-red-600">
               전송에 문제가 생겼어요. 다시 시도해주시거나, 아래로 바로
@@ -450,7 +483,7 @@ export function ReservationForm() {
             </button>
             <button
               type="button"
-              disabled={status === "submitting"}
+              disabled={status === "submitting" || !form.privacyAgreed}
               onClick={handleSubmit}
               className="rounded-full bg-ink px-8 py-3 text-sm font-medium text-paper transition-opacity hover:opacity-80 disabled:opacity-40"
             >
