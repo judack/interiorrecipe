@@ -11,6 +11,12 @@ const PAID_TIERS = [
   { size: "12~15평(복층포함)", price: "100만원" },
   { size: "15평 이상", price: "추후협의" },
 ];
+const FURNITURE_BUDGETS = [
+  "100만원 이하",
+  "300만원 이하",
+  "500~1000만원 이하",
+  "1000만원 이상",
+];
 const STYLES = ["미니멀", "모던", "북유럽", "빈티지", "기타"];
 const PAINS = ["수납 부족", "가구 배치", "좁아 보임", "기타"];
 
@@ -24,6 +30,7 @@ type FormState = {
   spaceType: string;
   size: string;
   budget: string;
+  furnitureBudget: string;
   styles: string[];
   pains: string[];
   name: string;
@@ -37,6 +44,7 @@ const INITIAL_STATE: FormState = {
   spaceType: "",
   size: "",
   budget: "",
+  furnitureBudget: "",
   styles: [],
   pains: [],
   name: "",
@@ -83,7 +91,11 @@ export function ReservationForm() {
   >("idle");
 
   const step1Done =
-    form.serviceType && form.spaceType && form.size && form.budget;
+    form.serviceType &&
+    form.spaceType &&
+    form.size &&
+    form.budget &&
+    form.furnitureBudget;
   const step3Done = form.name.trim() && form.contact.trim();
 
   function selectServiceType(value: string) {
@@ -119,6 +131,7 @@ export function ReservationForm() {
     `공간 유형: ${form.spaceType}`,
     `평수: ${form.size}`,
     `요금: ${form.budget}`,
+    `가구 예산: ${form.furnitureBudget}`,
     `선호 스타일: ${form.styles.length ? form.styles.join(", ") : "선택 안 함"}`,
     `불편한 점: ${form.pains.length ? form.pains.join(", ") : "선택 안 함"}`,
     `이름: ${form.name}`,
@@ -200,6 +213,24 @@ export function ReservationForm() {
               </div>
             </div>
           )}
+
+          <div>
+            <p className="text-base font-medium">
+              Q) 가구 예산은 어느 정도로 생각하세요?
+            </p>
+            <div className="mt-4 flex flex-wrap gap-2">
+              {FURNITURE_BUDGETS.map((v) => (
+                <Choice
+                  key={v}
+                  label={v}
+                  active={form.furnitureBudget === v}
+                  onClick={() =>
+                    setForm((prev) => ({ ...prev, furnitureBudget: v }))
+                  }
+                />
+              ))}
+            </div>
+          </div>
 
           <button
             type="button"

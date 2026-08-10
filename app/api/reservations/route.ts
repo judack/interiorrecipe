@@ -8,6 +8,7 @@ export async function POST(request: Request) {
     spaceType,
     size,
     budget,
+    furnitureBudget,
     styles,
     pains,
     name,
@@ -16,7 +17,15 @@ export async function POST(request: Request) {
     visitDate,
   } = body;
 
-  if (!serviceType || !spaceType || !size || !budget || !name || !contact) {
+  if (
+    !serviceType ||
+    !spaceType ||
+    !size ||
+    !budget ||
+    !furnitureBudget ||
+    !name ||
+    !contact
+  ) {
     return NextResponse.json(
       { error: "필수 항목이 비어 있습니다." },
       { status: 400 }
@@ -26,12 +35,13 @@ export async function POST(request: Request) {
   await ensureReservationsTable();
 
   await sql`
-    INSERT INTO reservations (service_type, space_type, size, budget, styles, pains, name, contact, message, visit_date)
+    INSERT INTO reservations (service_type, space_type, size, budget, furniture_budget, styles, pains, name, contact, message, visit_date)
     VALUES (
       ${serviceType},
       ${spaceType},
       ${size},
       ${budget},
+      ${furnitureBudget},
       ${Array.isArray(styles) ? styles.join(", ") : ""},
       ${Array.isArray(pains) ? pains.join(", ") : ""},
       ${name},

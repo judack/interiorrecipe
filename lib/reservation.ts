@@ -8,6 +8,7 @@ export type Reservation = {
   space_type: string;
   size: string;
   budget: string;
+  furniture_budget: string;
   styles: string;
   pains: string;
   name: string;

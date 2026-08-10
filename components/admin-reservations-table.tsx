@@ -90,6 +90,7 @@ export function AdminReservationsTable({
             <th className="py-3 pr-4 font-medium">공간 유형</th>
             <th className="py-3 pr-4 font-medium">평수</th>
             <th className="py-3 pr-4 font-medium">요금</th>
+            <th className="py-3 pr-4 font-medium">가구 예산</th>
             <th className="py-3 pr-4 font-medium">방문 희망일</th>
             <th className="py-3 pr-4 font-medium">스타일</th>
             <th className="py-3 pr-4 font-medium">불편한 점</th>
@@ -109,6 +110,7 @@ export function AdminReservationsTable({
               <td className="py-3 pr-4">{r.space_type}</td>
               <td className="py-3 pr-4">{r.size}</td>
               <td className="py-3 pr-4">{r.budget}</td>
+              <td className="py-3 pr-4">{r.furniture_budget || "-"}</td>
               <td className="py-3 pr-4 whitespace-nowrap">
                 {r.visit_date || "-"}
               </td>
