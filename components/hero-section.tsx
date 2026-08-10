@@ -27,7 +27,7 @@ export function HeroSection() {
         </Reveal>
 
         <Reveal delay={80}>
-          <h1 className="mt-6 max-w-4xl font-display text-[2.5rem] leading-[1.15] font-bold text-white md:text-6xl lg:text-7xl">
+          <h1 className="mt-6 max-w-4xl text-[2.5rem] leading-[1.15] font-semibold tracking-tight text-white md:text-6xl lg:text-7xl">
             내 방, 어떻게 꾸며야 할지
             <br />
             모르겠다면?
@@ -38,7 +38,7 @@ export function HeroSection() {
           <p className="mt-8 max-w-md text-lg leading-relaxed text-white/80 md:text-xl">
             사진만 보내주세요.
             <br />
-            공간에 맞는 가구배치 레시피를 알려드립니다.
+            공간에 맞는 가구배치와 인테리어 솔루션을 제안합니다.
           </p>
         </Reveal>
 

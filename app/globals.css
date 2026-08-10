@@ -24,8 +24,6 @@
   --color-line: var(--color-line);
   --font-sans: "Pretendard Variable", "Pretendard", -apple-system,
     BlinkMacSystemFont, "Apple SD Gothic Neo", "Malgun Gothic", sans-serif;
-  --font-display: var(--font-display), "Nanum Myeongjo", "Noto Serif KR",
-    serif;
 }
 
 html {
