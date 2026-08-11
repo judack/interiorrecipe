@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import "./globals.css";
+import { VisitTracker } from "@/components/visit-tracker";
 
 export const metadata: Metadata = {
   title: "인테리어레시피 | 내 방에 맞는 인테리어 솔루션",
@@ -10,7 +11,10 @@ export const metadata: Metadata = {
 export default function RootLayout({ children }: LayoutProps<"/">) {
   return (
     <html lang="ko" className="h-full antialiased">
-      <body className="min-h-full bg-paper text-ink">{children}</body>
+      <body className="min-h-full bg-paper text-ink">
+        <VisitTracker />
+        {children}
+      </body>
     </html>
   );
 }

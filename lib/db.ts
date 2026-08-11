@@ -45,6 +45,17 @@ export async function ensureReservationsTable() {
   `;
 }
 
+export async function ensurePageViewsTable() {
+  await sql`
+    CREATE TABLE IF NOT EXISTS page_views (
+      id SERIAL PRIMARY KEY,
+      created_at TIMESTAMPTZ NOT NULL DEFAULT now(),
+      path TEXT NOT NULL DEFAULT '',
+      visitor_id TEXT NOT NULL DEFAULT ''
+    )
+  `;
+}
+
 export async function ensureProductsTable() {
   await sql`
     CREATE TABLE IF NOT EXISTS products (

@@ -7,6 +7,7 @@ const TABS = [
   { href: "/admin", label: "상담 신청" },
   { href: "/admin/calendar", label: "캘린더" },
   { href: "/admin/products", label: "추천 가구" },
+  { href: "/admin/stats", label: "방문자 통계" },
 ];
 
 export function AdminNav() {
