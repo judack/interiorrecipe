@@ -1,6 +1,15 @@
 export const SEASONS = ["봄", "여름", "가을", "겨울", "전체"] as const;
 export type Season = (typeof SEASONS)[number];
 
+export const CATEGORIES = [
+  "특가 할인템",
+  "첫자취를 위한 가구",
+  "컨텐츠에 사용된 가구",
+  "자취꿀템",
+  "자취식품창고",
+] as const;
+export type Category = (typeof CATEGORIES)[number];
+
 export type Product = {
   id: number;
   created_at: string;

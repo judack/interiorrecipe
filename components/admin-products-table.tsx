@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { SEASONS, type Product, type Season } from "@/lib/product";
+import { CATEGORIES, SEASONS, type Product, type Season } from "@/lib/product";
 
 type Draft = {
   name: string;
@@ -17,7 +17,7 @@ const EMPTY_DRAFT: Draft = {
   name: "",
   price: "",
   imageUrl: "",
-  category: "",
+  category: CATEGORIES[0],
   season: "전체",
   coupangUrl: "",
   sortOrder: "0",
@@ -211,15 +211,20 @@ export function AdminProductsTable({
               />
             </div>
             <div>
-              <label className="text-sm text-mute">카테고리 (선택)</label>
-              <input
+              <label className="text-sm text-mute">카테고리</label>
+              <select
                 value={draft.category}
                 onChange={(e) =>
                   setDraft({ ...draft, category: e.target.value })
                 }
                 className="mt-1 w-full rounded-xl border border-line px-3 py-2 text-sm outline-none focus:border-ink"
-                placeholder="예: 조명"
-              />
+              >
+                {CATEGORIES.map((c) => (
+                  <option key={c} value={c}>
+                    {c}
+                  </option>
+                ))}
+              </select>
             </div>
             <div>
               <label className="text-sm text-mute">계절</label>
