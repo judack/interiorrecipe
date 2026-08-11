@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { ensureReservationsTable, sql } from "@/lib/db";
+import { sendKakaoMemo } from "@/lib/kakao";
 
 export async function POST(request: Request) {
   const body = await request.json();
@@ -58,6 +59,14 @@ export async function POST(request: Request) {
     )
     RETURNING id
   `;
+
+  try {
+    await sendKakaoMemo(
+      `[상담 신청] ${name}님\n서비스: ${serviceType} · ${spaceType} · ${size}\n연락처: ${contact}\n지역: ${region}`
+    );
+  } catch {
+    // 카카오 알림 실패는 신청 접수 자체를 막지 않음
+  }
 
   return NextResponse.json({ ok: true, id: rows[0].id });
 }
