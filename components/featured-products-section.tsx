@@ -1,14 +1,13 @@
 import { ensureProductsTable, sql } from "@/lib/db";
-import { getCurrentSeason, type Product } from "@/lib/product";
+import type { Product } from "@/lib/product";
 import { Reveal } from "@/components/reveal";
 import { FeaturedProductsTabs } from "@/components/featured-products-tabs";
 
 async function getFeaturedProducts(): Promise<Product[]> {
   await ensureProductsTable();
-  const season = getCurrentSeason();
   const rows = await sql`
     SELECT * FROM products
-    WHERE active = true AND (season = ${season} OR season = '전체')
+    WHERE active = true
     ORDER BY sort_order ASC, created_at DESC
   `;
   return rows as Product[];
@@ -16,14 +15,13 @@ async function getFeaturedProducts(): Promise<Product[]> {
 
 export async function FeaturedProductsSection() {
   const products = await getFeaturedProducts();
-  const season = getCurrentSeason();
 
   return (
     <section id="featured" className="px-6 py-28 md:px-10 md:py-40">
       <div className="mx-auto max-w-6xl">
         <Reveal>
           <p className="text-xs font-medium tracking-[0.2em] text-mute uppercase">
-            Featured · {season}
+            Featured
           </p>
           <h2 className="mt-6 max-w-2xl text-3xl font-semibold tracking-tight md:text-5xl">
             이번달 추천 아이템

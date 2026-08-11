@@ -1,6 +1,5 @@
 import { NextResponse } from "next/server";
 import { ensureProductsTable, sql } from "@/lib/db";
-import { SEASONS } from "@/lib/product";
 
 export async function GET() {
   await ensureProductsTable();
@@ -12,8 +11,7 @@ export async function GET() {
 
 export async function POST(request: Request) {
   const body = await request.json();
-  const { name, price, imageUrl, category, season, coupangUrl, sortOrder } =
-    body;
+  const { name, price, imageUrl, category, coupangUrl, sortOrder } = body;
 
   if (!name || !price || !imageUrl || !coupangUrl) {
     return NextResponse.json(
@@ -22,23 +20,15 @@ export async function POST(request: Request) {
     );
   }
 
-  if (!SEASONS.includes(season)) {
-    return NextResponse.json(
-      { error: "잘못된 계절값입니다." },
-      { status: 400 }
-    );
-  }
-
   await ensureProductsTable();
 
   await sql`
-    INSERT INTO products (name, price, image_url, category, season, coupang_url, sort_order)
+    INSERT INTO products (name, price, image_url, category, coupang_url, sort_order)
     VALUES (
       ${name},
       ${price},
       ${imageUrl},
       ${category || ""},
-      ${season},
       ${coupangUrl},
       ${Number(sortOrder) || 0}
     )

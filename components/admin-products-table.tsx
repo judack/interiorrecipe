@@ -1,14 +1,13 @@
 "use client";
 
 import { useState } from "react";
-import { CATEGORIES, SEASONS, type Product, type Season } from "@/lib/product";
+import { CATEGORIES, type Product } from "@/lib/product";
 
 type Draft = {
   name: string;
   price: string;
   imageUrl: string;
   category: string;
-  season: Season;
   coupangUrl: string;
   sortOrder: string;
 };
@@ -18,7 +17,6 @@ const EMPTY_DRAFT: Draft = {
   price: "",
   imageUrl: "",
   category: CATEGORIES[0],
-  season: "전체",
   coupangUrl: "",
   sortOrder: "0",
 };
@@ -29,7 +27,6 @@ function toDraft(p: Product): Draft {
     price: p.price,
     imageUrl: p.image_url,
     category: p.category,
-    season: p.season,
     coupangUrl: p.coupang_url,
     sortOrder: String(p.sort_order),
   };
@@ -93,7 +90,6 @@ export function AdminProductsTable({
                   price: draft.price,
                   image_url: draft.imageUrl,
                   category: draft.category,
-                  season: draft.season,
                   coupang_url: draft.coupangUrl,
                   sort_order: Number(draft.sortOrder) || 0,
                 }
@@ -123,7 +119,6 @@ export function AdminProductsTable({
           price: p.price,
           imageUrl: p.image_url,
           category: p.category,
-          season: p.season,
           coupangUrl: p.coupang_url,
           sortOrder: p.sort_order,
           active: nextActive,
@@ -227,22 +222,6 @@ export function AdminProductsTable({
               </select>
             </div>
             <div>
-              <label className="text-sm text-mute">계절</label>
-              <select
-                value={draft.season}
-                onChange={(e) =>
-                  setDraft({ ...draft, season: e.target.value as Season })
-                }
-                className="mt-1 w-full rounded-xl border border-line px-3 py-2 text-sm outline-none focus:border-ink"
-              >
-                {SEASONS.map((s) => (
-                  <option key={s} value={s}>
-                    {s}
-                  </option>
-                ))}
-              </select>
-            </div>
-            <div>
               <label className="text-sm text-mute">노출 순서 (숫자가 작을수록 먼저)</label>
               <input
                 type="number"
@@ -289,7 +268,7 @@ export function AdminProductsTable({
             <div className="min-w-0 flex-1">
               <p className="font-medium">{p.name}</p>
               <p className="text-sm text-mute">
-                {p.price} · {p.category || "카테고리 없음"} · {p.season}
+                {p.price} · {p.category || "카테고리 없음"}
               </p>
             </div>
             <button

@@ -36,7 +36,7 @@ export default async function AdminProductsPage() {
         </h1>
         <p className="mt-2 text-sm text-mute">
           여기서 추가·수정한 상품이 랜딩페이지의 "이번달 추천 아이템" 섹션에
-          계절과 카테고리에 맞게 노출됩니다.
+          카테고리에 맞게 노출됩니다.
         </p>
 
         <div className="mt-10">

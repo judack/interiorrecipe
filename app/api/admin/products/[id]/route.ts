@@ -1,6 +1,5 @@
 import { NextResponse } from "next/server";
 import { sql } from "@/lib/db";
-import { SEASONS } from "@/lib/product";
 
 export async function PATCH(
   request: Request,
@@ -8,15 +7,8 @@ export async function PATCH(
 ) {
   const { id } = await params;
   const body = await request.json();
-  const { name, price, imageUrl, category, season, coupangUrl, sortOrder, active } =
+  const { name, price, imageUrl, category, coupangUrl, sortOrder, active } =
     body;
-
-  if (season !== undefined && !SEASONS.includes(season)) {
-    return NextResponse.json(
-      { error: "잘못된 계절값입니다." },
-      { status: 400 }
-    );
-  }
 
   await sql`
     UPDATE products SET
@@ -24,7 +16,6 @@ export async function PATCH(
       price = ${price},
       image_url = ${imageUrl},
       category = ${category || ""},
-      season = ${season},
       coupang_url = ${coupangUrl},
       sort_order = ${Number(sortOrder) || 0},
       active = ${active}
