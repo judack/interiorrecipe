@@ -178,9 +178,15 @@ export function AdminProductsTable({
               <label className="text-sm text-mute">가격</label>
               <input
                 value={draft.price}
-                onChange={(e) => setDraft({ ...draft, price: e.target.value })}
+                onChange={(e) => {
+                  const digits = e.target.value.replace(/[^0-9]/g, "");
+                  const price = digits
+                    ? `${Number(digits).toLocaleString("ko-KR")}원`
+                    : "";
+                  setDraft({ ...draft, price });
+                }}
                 className="mt-1 w-full rounded-xl border border-line px-3 py-2 text-sm outline-none focus:border-ink"
-                placeholder="예: 39,900원"
+                placeholder="숫자만 입력하세요 (예: 39900)"
               />
             </div>
             <div className="md:col-span-2">
