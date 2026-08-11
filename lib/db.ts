@@ -43,6 +43,15 @@ export async function ensureReservationsTable() {
   await sql`
     ALTER TABLE reservations ADD COLUMN IF NOT EXISTS mbti_result TEXT
   `;
+  await sql`
+    ALTER TABLE reservations ADD COLUMN IF NOT EXISTS gender TEXT
+  `;
+  await sql`
+    ALTER TABLE reservations ADD COLUMN IF NOT EXISTS birth_year TEXT
+  `;
+  await sql`
+    ALTER TABLE reservations ADD COLUMN IF NOT EXISTS birth_month TEXT
+  `;
 }
 
 export async function ensurePageViewsTable() {

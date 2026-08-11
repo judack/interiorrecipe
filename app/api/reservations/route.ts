@@ -14,6 +14,9 @@ export async function POST(request: Request) {
     pains,
     name,
     contact,
+    gender,
+    birthYear,
+    birthMonth,
     region,
     addressDetail,
     message,
@@ -40,7 +43,7 @@ export async function POST(request: Request) {
   await ensureReservationsTable();
 
   const rows = await sql`
-    INSERT INTO reservations (service_type, space_type, size, budget, furniture_budget, styles, pains, name, contact, region, address_detail, message, visit_date, mbti_result)
+    INSERT INTO reservations (service_type, space_type, size, budget, furniture_budget, styles, pains, name, contact, gender, birth_year, birth_month, region, address_detail, message, visit_date, mbti_result)
     VALUES (
       ${serviceType},
       ${spaceType},
@@ -51,6 +54,9 @@ export async function POST(request: Request) {
       ${Array.isArray(pains) ? pains.join(", ") : ""},
       ${name},
       ${contact},
+      ${gender || null},
+      ${birthYear || null},
+      ${birthMonth || null},
       ${region},
       ${addressDetail || null},
       ${message || null},

@@ -97,7 +97,7 @@ export function AdminReservationsTable({
 
   return (
     <div className="overflow-x-auto">
-      <table className="w-full min-w-[1480px] border-collapse text-left text-sm">
+      <table className="w-full min-w-[1660px] border-collapse text-left text-sm">
         <thead>
           <tr className="border-b border-line text-mute">
             <th className="py-3 pr-6 font-medium whitespace-nowrap">
@@ -111,6 +111,12 @@ export function AdminReservationsTable({
             </th>
             <th className="py-3 pr-6 font-medium whitespace-nowrap">
               연락처
+            </th>
+            <th className="min-w-[70px] py-3 pr-6 font-medium whitespace-nowrap">
+              성별
+            </th>
+            <th className="min-w-[110px] py-3 pr-6 font-medium whitespace-nowrap">
+              출생연월
             </th>
             <th className="min-w-[260px] py-3 pr-6 font-medium whitespace-nowrap">
               주소
@@ -164,6 +170,14 @@ export function AdminReservationsTable({
                 {r.name}
               </td>
               <td className="py-4 pr-6 whitespace-nowrap">{r.contact}</td>
+              <td className="py-4 pr-6 whitespace-nowrap">
+                {r.gender || "-"}
+              </td>
+              <td className="py-4 pr-6 whitespace-nowrap">
+                {r.birth_year
+                  ? `${r.birth_year}년${r.birth_month ? ` ${r.birth_month}월` : ""}`
+                  : "-"}
+              </td>
               <td className="py-4 pr-6">
                 {r.region}
                 {r.address_detail ? ` ${r.address_detail}` : ""}

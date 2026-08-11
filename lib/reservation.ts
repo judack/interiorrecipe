@@ -13,6 +13,9 @@ export type Reservation = {
   pains: string;
   name: string;
   contact: string;
+  gender: string | null;
+  birth_year: string | null;
+  birth_month: string | null;
   region: string;
   address_detail: string | null;
   message: string | null;

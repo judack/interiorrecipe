@@ -44,6 +44,13 @@ const REGIONS = [
 ];
 const STYLES = ["미니멀", "모던", "북유럽", "빈티지", "기타"];
 const PAINS = ["수납 부족", "가구 배치", "좁아 보임", "기타"];
+const GENDERS = ["여성", "남성"];
+const CURRENT_YEAR = new Date().getFullYear();
+const BIRTH_YEARS = Array.from(
+  { length: 80 },
+  (_, i) => CURRENT_YEAR - 14 - i
+);
+const BIRTH_MONTHS = Array.from({ length: 12 }, (_, i) => i + 1);
 
 type MbtiOption = { letter: "A" | "B" | "C" | "D"; label: string };
 type MbtiQuestion = { question: string; options: MbtiOption[] };
@@ -175,6 +182,9 @@ type FormState = {
   pains: string[];
   name: string;
   contact: string;
+  gender: string;
+  birthYear: string;
+  birthMonth: string;
   region: string;
   addressDetail: string;
   message: string;
@@ -193,6 +203,9 @@ const INITIAL_STATE: FormState = {
   pains: [],
   name: "",
   contact: "",
+  gender: "",
+  birthYear: "",
+  birthMonth: "",
   region: "",
   addressDetail: "",
   message: "",
@@ -349,6 +362,12 @@ export function ReservationForm() {
     `MBTI 인테리어 성향: ${form.mbtiResult || "미응답"}`,
     `이름: ${form.name}`,
     `연락처: ${form.contact}`,
+    `성별: ${form.gender || "선택 안 함"}`,
+    `출생연월: ${
+      form.birthYear
+        ? `${form.birthYear}년${form.birthMonth ? ` ${form.birthMonth}월` : ""}`
+        : "선택 안 함"
+    }`,
     `지역: ${form.region}`,
     `상세 주소: ${form.addressDetail || "없음"}`,
     `방문 희망일: ${form.visitDate || "미정"}`,
@@ -681,6 +700,65 @@ export function ReservationForm() {
               className="mt-3 w-full rounded-xl border border-line bg-paper px-4 py-3 text-base outline-none focus:border-ink"
               placeholder="010-0000-0000"
             />
+          </div>
+
+          <div>
+            <label className="text-base font-medium" htmlFor="gender">
+              Q) 성별이 어떻게 되시나요? (선택)
+            </label>
+            <select
+              id="gender"
+              value={form.gender}
+              onChange={(e) =>
+                setForm((prev) => ({ ...prev, gender: e.target.value }))
+              }
+              className="mt-3 w-full rounded-xl border border-line bg-paper px-4 py-3 text-base outline-none focus:border-ink"
+            >
+              <option value="">선택 안 함</option>
+              {GENDERS.map((g) => (
+                <option key={g} value={g}>
+                  {g}
+                </option>
+              ))}
+            </select>
+          </div>
+
+          <div>
+            <p className="text-base font-medium">
+              Q) 태어난 연도와 월이 어떻게 되시나요? (선택)
+            </p>
+            <div className="mt-3 flex gap-3">
+              <select
+                id="birthYear"
+                value={form.birthYear}
+                onChange={(e) =>
+                  setForm((prev) => ({ ...prev, birthYear: e.target.value }))
+                }
+                className="w-full rounded-xl border border-line bg-paper px-4 py-3 text-base outline-none focus:border-ink"
+              >
+                <option value="">연도</option>
+                {BIRTH_YEARS.map((y) => (
+                  <option key={y} value={y}>
+                    {y}년
+                  </option>
+                ))}
+              </select>
+              <select
+                id="birthMonth"
+                value={form.birthMonth}
+                onChange={(e) =>
+                  setForm((prev) => ({ ...prev, birthMonth: e.target.value }))
+                }
+                className="w-full rounded-xl border border-line bg-paper px-4 py-3 text-base outline-none focus:border-ink"
+              >
+                <option value="">월</option>
+                {BIRTH_MONTHS.map((m) => (
+                  <option key={m} value={m}>
+                    {m}월
+                  </option>
+                ))}
+              </select>
+            </div>
           </div>
 
           <div>
