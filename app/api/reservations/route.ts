@@ -32,6 +32,8 @@ export async function POST(request: Request) {
     !furnitureBudget ||
     !name ||
     !contact ||
+    !gender ||
+    !birthYear ||
     !region
   ) {
     return NextResponse.json(

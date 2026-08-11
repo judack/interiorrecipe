@@ -266,7 +266,11 @@ export function ReservationForm() {
     form.budget &&
     form.furnitureBudget;
   const step4Done =
-    form.name.trim() && form.contact.trim() && form.region;
+    form.name.trim() &&
+    form.contact.trim() &&
+    form.gender &&
+    form.birthYear &&
+    form.region;
 
   function selectMbtiAnswer(letter: string) {
     const nextAnswers = [...mbtiAnswers, letter];
@@ -704,7 +708,7 @@ export function ReservationForm() {
 
           <div>
             <label className="text-base font-medium" htmlFor="gender">
-              Q) 성별이 어떻게 되시나요? (선택)
+              Q) 성별이 어떻게 되시나요?
             </label>
             <select
               id="gender"
@@ -714,7 +718,9 @@ export function ReservationForm() {
               }
               className="mt-3 w-full rounded-xl border border-line bg-paper px-4 py-3 text-base outline-none focus:border-ink"
             >
-              <option value="">선택 안 함</option>
+              <option value="" disabled>
+                성별을 선택해주세요
+              </option>
               {GENDERS.map((g) => (
                 <option key={g} value={g}>
                   {g}
@@ -725,7 +731,7 @@ export function ReservationForm() {
 
           <div>
             <p className="text-base font-medium">
-              Q) 태어난 연도와 월이 어떻게 되시나요? (선택)
+              Q) 태어난 연도와 월이 어떻게 되시나요? (연도 필수, 월 선택)
             </p>
             <div className="mt-3 flex gap-3">
               <select
@@ -736,7 +742,9 @@ export function ReservationForm() {
                 }
                 className="w-full rounded-xl border border-line bg-paper px-4 py-3 text-base outline-none focus:border-ink"
               >
-                <option value="">연도</option>
+                <option value="" disabled>
+                  연도
+                </option>
                 {BIRTH_YEARS.map((y) => (
                   <option key={y} value={y}>
                     {y}년
@@ -751,7 +759,7 @@ export function ReservationForm() {
                 }
                 className="w-full rounded-xl border border-line bg-paper px-4 py-3 text-base outline-none focus:border-ink"
               >
-                <option value="">월</option>
+                <option value="">월 (선택)</option>
                 {BIRTH_MONTHS.map((m) => (
                   <option key={m} value={m}>
                     {m}월
