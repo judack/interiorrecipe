@@ -97,7 +97,7 @@ export function AdminReservationsTable({
 
   return (
     <div className="overflow-x-auto">
-      <table className="w-full min-w-[1300px] border-collapse text-left text-sm">
+      <table className="w-full min-w-[1480px] border-collapse text-left text-sm">
         <thead>
           <tr className="border-b border-line text-mute">
             <th className="py-3 pr-6 font-medium whitespace-nowrap">
@@ -135,6 +135,9 @@ export function AdminReservationsTable({
             </th>
             <th className="min-w-[130px] py-3 pr-6 font-medium whitespace-nowrap">
               불편한 점
+            </th>
+            <th className="min-w-[180px] py-3 pr-6 font-medium whitespace-nowrap">
+              MBTI 성향
             </th>
             <th className="min-w-[260px] py-3 pr-6 font-medium">
               요청사항
@@ -179,6 +182,9 @@ export function AdminReservationsTable({
               </td>
               <td className="py-4 pr-6 whitespace-nowrap">
                 {r.pains || "-"}
+              </td>
+              <td className="py-4 pr-6 whitespace-nowrap">
+                {r.mbti_result || "-"}
               </td>
               <td className="py-4 pr-6">{r.message || "-"}</td>
               <td className="py-4 pr-6">

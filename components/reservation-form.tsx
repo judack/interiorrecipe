@@ -45,6 +45,121 @@ const REGIONS = [
 const STYLES = ["미니멀", "모던", "북유럽", "빈티지", "기타"];
 const PAINS = ["수납 부족", "가구 배치", "좁아 보임", "기타"];
 
+type MbtiOption = { letter: "A" | "B" | "C" | "D"; label: string };
+type MbtiQuestion = { question: string; options: MbtiOption[] };
+
+const MBTI_QUESTIONS: MbtiQuestion[] = [
+  {
+    question: "주말에 가장 하고 싶은 일은?",
+    options: [
+      { letter: "A", label: "친구들이랑 수다 떨기" },
+      { letter: "B", label: "혼자 책 읽으며 힐링" },
+      { letter: "C", label: "작업실에서 뭔가 만들기" },
+      { letter: "D", label: "유튜브 영상 편하게 보기" },
+    ],
+  },
+  {
+    question: "집에서 가장 중요한 공간은?",
+    options: [
+      { letter: "A", label: "거실 – 모두가 모이는 공간" },
+      { letter: "B", label: "침실 – 나만의 안식처" },
+      { letter: "C", label: "서재나 책상 – 집중하는 공간" },
+      { letter: "D", label: "주방 – 요리하고 먹는 즐거움" },
+    ],
+  },
+  {
+    question: "집을 꾸밀 때 가장 먼저 떠오르는 키워드는?",
+    options: [
+      { letter: "A", label: "따뜻함" },
+      { letter: "B", label: "트렌디" },
+      { letter: "C", label: "실용성" },
+      { letter: "D", label: "개성" },
+    ],
+  },
+  {
+    question: "친구가 놀러온다고 할 때 당신은?",
+    options: [
+      { letter: "A", label: "사람 오는 게 너무 좋아!" },
+      { letter: "B", label: "약간 귀찮지만 정리는 한다" },
+      { letter: "C", label: "최대한 조용히 혼자 있고 싶다" },
+      { letter: "D", label: "뭐 어때~ 대충 치운다" },
+    ],
+  },
+  {
+    question: "정리 스타일은?",
+    options: [
+      { letter: "A", label: "항상 깔끔해야 마음이 편함" },
+      { letter: "B", label: "필요한 것만 챙겨두는 미니멀" },
+      { letter: "C", label: "내가 아는 나만의 정리 방식" },
+      { letter: "D", label: "일단 눈에 안 보이면 됨!" },
+    ],
+  },
+  {
+    question: "가장 선호하는 색감은?",
+    options: [
+      { letter: "A", label: "우드톤, 베이지, 크림" },
+      { letter: "B", label: "블랙&화이트" },
+      { letter: "C", label: "파스텔이나 감성 컬러" },
+      { letter: "D", label: "비비드 컬러나 네온 계열" },
+    ],
+  },
+  {
+    question: "인테리어 가구를 고를 때 중요하게 생각하는 건?",
+    options: [
+      { letter: "A", label: "실용성과 수납력" },
+      { letter: "B", label: "디자인과 분위기" },
+      { letter: "C", label: "가격과 내구성" },
+      { letter: "D", label: "감성! 무조건 감성!" },
+    ],
+  },
+  {
+    question: "집에서 가장 자주 하는 행동은?",
+    options: [
+      { letter: "A", label: "요리" },
+      { letter: "B", label: "콘텐츠 감상" },
+      { letter: "C", label: "독서나 작업" },
+      { letter: "D", label: "친구들과 파티" },
+    ],
+  },
+  {
+    question: "쇼핑 스타일은?",
+    options: [
+      { letter: "A", label: "꼼꼼하게 비교 후 구매" },
+      { letter: "B", label: "디자인 보고 직감적으로" },
+      { letter: "C", label: "추천 제품 우선" },
+      { letter: "D", label: "할인하면 산다" },
+    ],
+  },
+  {
+    question: "내 공간에서 가장 싫은 상황은?",
+    options: [
+      { letter: "A", label: "정리가 안 된 모습" },
+      { letter: "B", label: "남들과 똑같은 느낌" },
+      { letter: "C", label: "불편한 가구" },
+      { letter: "D", label: "감성 없는 공간" },
+    ],
+  },
+];
+
+const MBTI_RESULTS: Record<
+  MbtiOption["letter"],
+  { label: string; types: string }
+> = {
+  A: { label: "정갈한 미니멀 & 실용주의 스타일", types: "ISTJ · ISFJ · ESTJ" },
+  B: { label: "따뜻한 감성 & 코지 스타일", types: "INFJ · INFP · ENFJ" },
+  C: { label: "스마트 & 구조적 인테리어", types: "INTJ · INTP · ISTP" },
+  D: { label: "개성 넘치고 컬러풀한 공간", types: "ENFP · ESFP · ENTP" },
+};
+
+function computeMbtiResult(answers: string[]) {
+  const counts: Record<string, number> = { A: 0, B: 0, C: 0, D: 0 };
+  for (const a of answers) counts[a] = (counts[a] || 0) + 1;
+  const winner = (["A", "B", "C", "D"] as const).reduce((best, letter) =>
+    counts[letter] > counts[best] ? letter : best
+  );
+  return { letter: winner, ...MBTI_RESULTS[winner] };
+}
+
 function tomorrowDateString() {
   const d = new Date(Date.now() + 24 * 60 * 60 * 1000);
   return d.toISOString().slice(0, 10);
@@ -65,6 +180,7 @@ type FormState = {
   message: string;
   visitDate: string;
   privacyAgreed: boolean;
+  mbtiResult: string;
 };
 
 const INITIAL_STATE: FormState = {
@@ -82,6 +198,7 @@ const INITIAL_STATE: FormState = {
   message: "",
   visitDate: "",
   privacyAgreed: false,
+  mbtiResult: "",
 };
 
 function Choice({
@@ -123,6 +240,11 @@ export function ReservationForm() {
   const [reservationId, setReservationId] = useState<number | null>(null);
   const [photos, setPhotos] = useState<PhotoUpload[]>([]);
   const [finalized, setFinalized] = useState(false);
+  const [mbtiPhase, setMbtiPhase] = useState<"intro" | "quiz" | "result">(
+    "intro"
+  );
+  const [mbtiIndex, setMbtiIndex] = useState(0);
+  const [mbtiAnswers, setMbtiAnswers] = useState<string[]>([]);
 
   const step1Done =
     form.serviceType &&
@@ -130,8 +252,26 @@ export function ReservationForm() {
     form.size &&
     form.budget &&
     form.furnitureBudget;
-  const step3Done =
+  const step4Done =
     form.name.trim() && form.contact.trim() && form.region;
+
+  function selectMbtiAnswer(letter: string) {
+    const nextAnswers = [...mbtiAnswers, letter];
+    if (mbtiIndex === MBTI_QUESTIONS.length - 1) {
+      const result = computeMbtiResult(nextAnswers);
+      setForm((prev) => ({ ...prev, mbtiResult: result.label }));
+      setMbtiAnswers(nextAnswers);
+      setMbtiPhase("result");
+    } else {
+      setMbtiAnswers(nextAnswers);
+      setMbtiIndex((i) => i + 1);
+    }
+  }
+
+  function mbtiPrevQuestion() {
+    setMbtiAnswers((prev) => prev.slice(0, -1));
+    setMbtiIndex((i) => Math.max(0, i - 1));
+  }
 
   function selectServiceType(value: string) {
     setForm((prev) => ({
@@ -206,6 +346,7 @@ export function ReservationForm() {
     `가구 예산: ${form.furnitureBudget}`,
     `선호 스타일: ${form.styles.length ? form.styles.join(", ") : "선택 안 함"}`,
     `불편한 점: ${form.pains.length ? form.pains.join(", ") : "선택 안 함"}`,
+    `MBTI 인테리어 성향: ${form.mbtiResult || "미응답"}`,
     `이름: ${form.name}`,
     `연락처: ${form.contact}`,
     `지역: ${form.region}`,
@@ -222,7 +363,7 @@ export function ReservationForm() {
 
   return (
     <div className="mt-12">
-      <p className="text-sm text-mute">{step} / 4</p>
+      <p className="text-sm text-mute">{step} / 5</p>
 
       {step === 1 && (
         <div className="mt-4 flex flex-col gap-8">
@@ -381,6 +522,136 @@ export function ReservationForm() {
       )}
 
       {step === 3 && (
+        <div className="mt-4 flex flex-col gap-8">
+          {mbtiPhase === "intro" && (
+            <div className="flex flex-col gap-5">
+              <p className="text-xl font-semibold tracking-tight">
+                😀 MBTI 인테리어 성향 테스트
+              </p>
+              <p className="text-base text-mute">
+                테스트를 통해 컨설팅 할 때 고려하여 디자인 합니다.
+              </p>
+
+              <div className="rounded-2xl border border-line p-6">
+                <ul className="flex flex-col gap-2 text-sm">
+                  <li>
+                    <span className="font-medium">A</span>가 많은 사람 →
+                    정갈한 미니멀 & 실용주의 스타일 (ISTJ/ISFJ/ESTJ)
+                  </li>
+                  <li>
+                    <span className="font-medium">B</span>가 많은 사람 →
+                    따뜻한 감성 & 코지 스타일 (INFJ/INFP/ENFJ)
+                  </li>
+                  <li>
+                    <span className="font-medium">C</span>가 많은 사람 →
+                    스마트 & 구조적 인테리어 (INTJ/INTP/ISTP)
+                  </li>
+                  <li>
+                    <span className="font-medium">D</span>가 많은 사람 →
+                    개성 넘치고 컬러풀한 공간 (ENFP/ESFP/ENTP)
+                  </li>
+                </ul>
+              </div>
+
+              <p className="text-sm text-mute">
+                재미로 하는 것이니 너무 목숨 걸지 말아주세요😅
+                <br />
+                🎨 이 자료는 컨설팅 할 때 참고용으로 사용합니다~
+              </p>
+
+              <div className="flex gap-3">
+                <button
+                  type="button"
+                  onClick={() => setStep(2)}
+                  className="rounded-full border border-line px-8 py-3 text-sm font-medium text-ink"
+                >
+                  이전
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setMbtiPhase("quiz")}
+                  className="rounded-full bg-ink px-8 py-3 text-sm font-medium text-paper"
+                >
+                  테스트 시작하기
+                </button>
+              </div>
+            </div>
+          )}
+
+          {mbtiPhase === "quiz" && (
+            <div className="flex flex-col gap-6">
+              <p className="text-sm text-mute">
+                질문 {mbtiIndex + 1} / {MBTI_QUESTIONS.length}
+              </p>
+              <p className="text-base font-medium">
+                Q{mbtiIndex + 1}. {MBTI_QUESTIONS[mbtiIndex].question}
+              </p>
+              <div className="flex flex-col gap-2">
+                {MBTI_QUESTIONS[mbtiIndex].options.map((opt) => (
+                  <button
+                    key={opt.letter}
+                    type="button"
+                    onClick={() => selectMbtiAnswer(opt.letter)}
+                    className="rounded-xl border border-line px-5 py-3 text-left text-sm font-medium text-ink transition-colors hover:border-ink hover:bg-mist"
+                  >
+                    <span className="mr-2 text-mute">{opt.letter}.</span>
+                    {opt.label}
+                  </button>
+                ))}
+              </div>
+
+              <button
+                type="button"
+                onClick={() =>
+                  mbtiIndex === 0 ? setMbtiPhase("intro") : mbtiPrevQuestion()
+                }
+                className="self-start rounded-full border border-line px-8 py-3 text-sm font-medium text-ink"
+              >
+                이전
+              </button>
+            </div>
+          )}
+
+          {mbtiPhase === "result" && (
+            <div className="flex flex-col gap-5">
+              <p className="text-sm text-mute">테스트 결과</p>
+              <p className="text-xl font-semibold tracking-tight">
+                {computeMbtiResult(mbtiAnswers).label}
+              </p>
+              <p className="text-base text-mute">
+                {computeMbtiResult(mbtiAnswers).types}
+              </p>
+              <p className="text-sm text-mute">
+                이 결과는 컨설팅 시 참고 자료로만 사용돼요. 다음 단계에서
+                이름과 연락처를 입력해주세요.
+              </p>
+
+              <div className="flex gap-3">
+                <button
+                  type="button"
+                  onClick={() => {
+                    setMbtiIndex(MBTI_QUESTIONS.length - 1);
+                    setMbtiAnswers((prev) => prev.slice(0, -1));
+                    setMbtiPhase("quiz");
+                  }}
+                  className="rounded-full border border-line px-8 py-3 text-sm font-medium text-ink"
+                >
+                  다시 답하기
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setStep(4)}
+                  className="rounded-full bg-ink px-8 py-3 text-sm font-medium text-paper"
+                >
+                  다음
+                </button>
+              </div>
+            </div>
+          )}
+        </div>
+      )}
+
+      {step === 4 && (
         <div className="mt-4 flex flex-col gap-6">
           <div>
             <label className="text-base font-medium" htmlFor="name">
@@ -482,15 +753,15 @@ export function ReservationForm() {
           <div className="flex gap-3">
             <button
               type="button"
-              onClick={() => setStep(2)}
+              onClick={() => setStep(3)}
               className="rounded-full border border-line px-8 py-3 text-sm font-medium text-ink"
             >
               이전
             </button>
             <button
               type="button"
-              disabled={!step3Done}
-              onClick={() => setStep(4)}
+              disabled={!step4Done}
+              onClick={() => setStep(5)}
               className="rounded-full bg-ink px-8 py-3 text-sm font-medium text-paper disabled:opacity-30"
             >
               다음
@@ -499,7 +770,7 @@ export function ReservationForm() {
         </div>
       )}
 
-      {step === 4 && status === "success" && !finalized && (
+      {step === 5 && status === "success" && !finalized && (
         <div className="mt-4 flex flex-col gap-4">
           <p className="text-xl font-semibold tracking-tight">
             공간 사진을 올려주세요.
@@ -550,7 +821,7 @@ export function ReservationForm() {
         </div>
       )}
 
-      {step === 4 && status === "success" && finalized && (
+      {step === 5 && status === "success" && finalized && (
         <div className="mt-4 flex flex-col gap-4">
           <p className="text-xl font-semibold tracking-tight">
             접수가 완료됐어요.
@@ -561,7 +832,7 @@ export function ReservationForm() {
         </div>
       )}
 
-      {step === 4 && status !== "success" && (
+      {step === 5 && status !== "success" && (
         <div className="mt-4 flex flex-col gap-6">
           <p className="text-base font-medium">입력하신 내용을 확인해주세요</p>
 
@@ -627,7 +898,7 @@ export function ReservationForm() {
           <div className="flex flex-wrap gap-3">
             <button
               type="button"
-              onClick={() => setStep(3)}
+              onClick={() => setStep(4)}
               className="rounded-full border border-line px-8 py-3 text-sm font-medium text-ink"
             >
               이전

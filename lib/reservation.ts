@@ -18,5 +18,6 @@ export type Reservation = {
   message: string | null;
   visit_date: string | null;
   photo_urls: string | null;
+  mbti_result: string | null;
   status: ReservationStatus;
 };

@@ -17,6 +17,7 @@ export async function POST(request: Request) {
     addressDetail,
     message,
     visitDate,
+    mbtiResult,
   } = body;
 
   if (
@@ -38,7 +39,7 @@ export async function POST(request: Request) {
   await ensureReservationsTable();
 
   const rows = await sql`
-    INSERT INTO reservations (service_type, space_type, size, budget, furniture_budget, styles, pains, name, contact, region, address_detail, message, visit_date)
+    INSERT INTO reservations (service_type, space_type, size, budget, furniture_budget, styles, pains, name, contact, region, address_detail, message, visit_date, mbti_result)
     VALUES (
       ${serviceType},
       ${spaceType},
@@ -52,7 +53,8 @@ export async function POST(request: Request) {
       ${region},
       ${addressDetail || null},
       ${message || null},
-      ${visitDate || null}
+      ${visitDate || null},
+      ${mbtiResult || null}
     )
     RETURNING id
   `;
