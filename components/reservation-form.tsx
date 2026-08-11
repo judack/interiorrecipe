@@ -122,6 +122,7 @@ export function ReservationForm() {
   >("idle");
   const [reservationId, setReservationId] = useState<number | null>(null);
   const [photos, setPhotos] = useState<PhotoUpload[]>([]);
+  const [finalized, setFinalized] = useState(false);
 
   const step1Done =
     form.serviceType &&
@@ -498,14 +499,14 @@ export function ReservationForm() {
         </div>
       )}
 
-      {step === 4 && status === "success" && (
+      {step === 4 && status === "success" && !finalized && (
         <div className="mt-4 flex flex-col gap-4">
           <p className="text-xl font-semibold tracking-tight">
-            신청이 접수됐어요.
+            공간 사진을 올려주세요.
           </p>
           <p className="text-base text-mute">
-            빠르게 확인하고 연락드릴게요. 공간 사진이 있으시면 올려주세요 —
-            저희가 관리자 페이지에서 바로 확인할 수 있어요.
+            사진이 있으시면 올려주세요 — 저희가 관리자 페이지에서 바로
+            확인할 수 있어요. 없으시면 그냥 완료를 눌러주셔도 괜찮아요.
           </p>
 
           <label className="self-start rounded-full border border-line px-6 py-3 text-sm font-medium text-ink hover:bg-mist">
@@ -538,6 +539,25 @@ export function ReservationForm() {
               ))}
             </ul>
           )}
+
+          <button
+            type="button"
+            onClick={() => setFinalized(true)}
+            className="mt-4 self-start rounded-full bg-ink px-8 py-3 text-sm font-medium text-paper transition-opacity hover:opacity-80"
+          >
+            완료
+          </button>
+        </div>
+      )}
+
+      {step === 4 && status === "success" && finalized && (
+        <div className="mt-4 flex flex-col gap-4">
+          <p className="text-xl font-semibold tracking-tight">
+            접수가 완료됐어요.
+          </p>
+          <p className="text-base text-mute">
+            빠르게 확인하고 연락드릴게요.
+          </p>
         </div>
       )}
 
