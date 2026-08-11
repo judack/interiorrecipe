@@ -17,5 +17,6 @@ export type Reservation = {
   address_detail: string | null;
   message: string | null;
   visit_date: string | null;
+  photo_urls: string | null;
   status: ReservationStatus;
 };

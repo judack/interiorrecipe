@@ -37,6 +37,9 @@ export async function ensureReservationsTable() {
   await sql`
     ALTER TABLE reservations ADD COLUMN IF NOT EXISTS address_detail TEXT
   `;
+  await sql`
+    ALTER TABLE reservations ADD COLUMN IF NOT EXISTS photo_urls TEXT
+  `;
 }
 
 export async function ensureProductsTable() {

@@ -37,7 +37,7 @@ export async function POST(request: Request) {
 
   await ensureReservationsTable();
 
-  await sql`
+  const rows = await sql`
     INSERT INTO reservations (service_type, space_type, size, budget, furniture_budget, styles, pains, name, contact, region, address_detail, message, visit_date)
     VALUES (
       ${serviceType},
@@ -54,7 +54,8 @@ export async function POST(request: Request) {
       ${message || null},
       ${visitDate || null}
     )
+    RETURNING id
   `;
 
-  return NextResponse.json({ ok: true });
+  return NextResponse.json({ ok: true, id: rows[0].id });
 }

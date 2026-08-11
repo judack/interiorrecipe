@@ -96,6 +96,7 @@ export function AdminReservationsTable({
             <th className="py-3 pr-4 font-medium">스타일</th>
             <th className="py-3 pr-4 font-medium">불편한 점</th>
             <th className="py-3 pr-4 font-medium">요청사항</th>
+            <th className="py-3 pr-4 font-medium">사진</th>
             <th className="py-3 pr-4 font-medium">진행상태</th>
           </tr>
         </thead>
@@ -122,6 +123,25 @@ export function AdminReservationsTable({
               <td className="py-3 pr-4">{r.styles || "-"}</td>
               <td className="py-3 pr-4">{r.pains || "-"}</td>
               <td className="py-3 pr-4">{r.message || "-"}</td>
+              <td className="py-3 pr-4">
+                {r.photo_urls ? (
+                  <div className="flex flex-col gap-1">
+                    {r.photo_urls.split(",").map((url, i) => (
+                      <a
+                        key={url}
+                        href={`/api/admin/photos?url=${encodeURIComponent(url)}`}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="text-sm text-ink underline underline-offset-2 hover:no-underline"
+                      >
+                        사진 {i + 1}
+                      </a>
+                    ))}
+                  </div>
+                ) : (
+                  "-"
+                )}
+              </td>
               <td className="py-3 pr-4">
                 <StatusButtons
                   id={r.id}

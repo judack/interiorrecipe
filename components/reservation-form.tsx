@@ -1,7 +1,13 @@
 "use client";
 
 import { useState } from "react";
+import { upload } from "@vercel/blob/client";
 import { SITE } from "@/lib/site-config";
+
+type PhotoUpload = {
+  name: string;
+  state: "uploading" | "done" | "error";
+};
 
 const SERVICE_TYPES = ["유료", "무료"];
 const SPACE_TYPES = ["원룸", "투룸", "아파트", "기타"];
@@ -114,6 +120,8 @@ export function ReservationForm() {
   const [status, setStatus] = useState<
     "idle" | "submitting" | "success" | "error"
   >("idle");
+  const [reservationId, setReservationId] = useState<number | null>(null);
+  const [photos, setPhotos] = useState<PhotoUpload[]>([]);
 
   const step1Done =
     form.serviceType &&
@@ -146,9 +154,46 @@ export function ReservationForm() {
         body: JSON.stringify(form),
       });
       if (!res.ok) throw new Error("submit failed");
+      const data = await res.json();
+      setReservationId(data.id);
       setStatus("success");
     } catch {
       setStatus("error");
+    }
+  }
+
+  async function handlePhotoSelect(files: FileList | null) {
+    if (!files || !reservationId) return;
+
+    const fileList = Array.from(files);
+    setPhotos((prev) => [
+      ...prev,
+      ...fileList.map((f) => ({ name: f.name, state: "uploading" as const })),
+    ]);
+
+    for (const file of fileList) {
+      try {
+        const blob = await upload(file.name, file, {
+          access: "private",
+          handleUploadUrl: "/api/reservations/photos/upload",
+        });
+        await fetch(`/api/reservations/${reservationId}/photos`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ url: blob.url }),
+        });
+        setPhotos((prev) =>
+          prev.map((p) =>
+            p.name === file.name ? { ...p, state: "done" } : p
+          )
+        );
+      } catch {
+        setPhotos((prev) =>
+          prev.map((p) =>
+            p.name === file.name ? { ...p, state: "error" } : p
+          )
+        );
+      }
     }
   }
 
@@ -459,15 +504,40 @@ export function ReservationForm() {
             신청이 접수됐어요.
           </p>
           <p className="text-base text-mute">
-            빠르게 확인하고 연락드릴게요. 사진이 있으시면 아래 주소로
-            보내주세요.
+            빠르게 확인하고 연락드릴게요. 공간 사진이 있으시면 올려주세요 —
+            저희가 관리자 페이지에서 바로 확인할 수 있어요.
           </p>
-          <a
-            href={mailtoHref}
-            className="self-start rounded-full border border-line px-6 py-3 text-sm font-medium text-ink hover:bg-mist"
-          >
-            사진 보내기 (이메일 열기)
-          </a>
+
+          <label className="self-start rounded-full border border-line px-6 py-3 text-sm font-medium text-ink hover:bg-mist">
+            사진 올리기
+            <input
+              type="file"
+              accept="image/*"
+              multiple
+              onChange={(e) => handlePhotoSelect(e.target.files)}
+              className="hidden"
+            />
+          </label>
+
+          {photos.length > 0 && (
+            <ul className="flex flex-col gap-1.5">
+              {photos.map((p) => (
+                <li
+                  key={p.name}
+                  className="flex items-center gap-2 text-sm text-mute"
+                >
+                  <span>
+                    {p.state === "uploading"
+                      ? "⏳"
+                      : p.state === "done"
+                        ? "✓"
+                        : "✕"}
+                  </span>
+                  {p.name}
+                </li>
+              ))}
+            </ul>
+          )}
         </div>
       )}
 
