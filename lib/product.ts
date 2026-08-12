@@ -7,7 +7,7 @@ export const CATEGORIES = [
 ] as const;
 export type Category = (typeof CATEGORIES)[number];
 
-export const PRODUCT_TYPES = [
+const PRODUCT_TYPES_UNSORTED = [
   "책상",
   "침대",
   "식탁",
@@ -29,6 +29,10 @@ export const PRODUCT_TYPES = [
   "인테리어소품",
   "비품",
 ] as const;
+
+export const PRODUCT_TYPES = [...PRODUCT_TYPES_UNSORTED].sort((a, b) =>
+  a.localeCompare(b, "ko")
+) as unknown as typeof PRODUCT_TYPES_UNSORTED;
 export type ProductType = (typeof PRODUCT_TYPES)[number];
 
 export type Product = {
