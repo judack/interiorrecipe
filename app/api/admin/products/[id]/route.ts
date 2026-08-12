@@ -7,8 +7,16 @@ export async function PATCH(
 ) {
   const { id } = await params;
   const body = await request.json();
-  const { name, price, imageUrl, category, coupangUrl, sortOrder, active } =
-    body;
+  const {
+    name,
+    price,
+    imageUrl,
+    category,
+    productType,
+    coupangUrl,
+    sortOrder,
+    active,
+  } = body;
 
   await sql`
     UPDATE products SET
@@ -16,6 +24,7 @@ export async function PATCH(
       price = ${price},
       image_url = ${imageUrl},
       category = ${category || ""},
+      product_type = ${productType || ""},
       coupang_url = ${coupangUrl},
       sort_order = ${Number(sortOrder) || 0},
       active = ${active}

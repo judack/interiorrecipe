@@ -11,7 +11,8 @@ export async function GET() {
 
 export async function POST(request: Request) {
   const body = await request.json();
-  const { name, price, imageUrl, category, coupangUrl, sortOrder } = body;
+  const { name, price, imageUrl, category, productType, coupangUrl, sortOrder } =
+    body;
 
   if (!name || !price || !imageUrl || !coupangUrl) {
     return NextResponse.json(
@@ -23,12 +24,13 @@ export async function POST(request: Request) {
   await ensureProductsTable();
 
   await sql`
-    INSERT INTO products (name, price, image_url, category, coupang_url, sort_order)
+    INSERT INTO products (name, price, image_url, category, product_type, coupang_url, sort_order)
     VALUES (
       ${name},
       ${price},
       ${imageUrl},
       ${category || ""},
+      ${productType || ""},
       ${coupangUrl},
       ${Number(sortOrder) || 0}
     )

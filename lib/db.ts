@@ -80,4 +80,7 @@ export async function ensureProductsTable() {
       active BOOLEAN NOT NULL DEFAULT true
     )
   `;
+  await sql`
+    ALTER TABLE products ADD COLUMN IF NOT EXISTS product_type TEXT NOT NULL DEFAULT ''
+  `;
 }

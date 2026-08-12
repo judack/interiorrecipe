@@ -1,13 +1,14 @@
 "use client";
 
 import { useState } from "react";
-import { CATEGORIES, type Product } from "@/lib/product";
+import { CATEGORIES, PRODUCT_TYPES, type Product } from "@/lib/product";
 
 type Draft = {
   name: string;
   price: string;
   imageUrl: string;
   category: string;
+  productType: string;
   coupangUrl: string;
   sortOrder: string;
 };
@@ -17,6 +18,7 @@ const EMPTY_DRAFT: Draft = {
   price: "",
   imageUrl: "",
   category: CATEGORIES[0],
+  productType: PRODUCT_TYPES[0],
   coupangUrl: "",
   sortOrder: "0",
 };
@@ -27,6 +29,7 @@ function toDraft(p: Product): Draft {
     price: p.price,
     imageUrl: p.image_url,
     category: p.category,
+    productType: p.product_type,
     coupangUrl: p.coupang_url,
     sortOrder: String(p.sort_order),
   };
@@ -41,6 +44,12 @@ export function AdminProductsTable({
   const [editingId, setEditingId] = useState<number | "new" | null>(null);
   const [draft, setDraft] = useState<Draft>(EMPTY_DRAFT);
   const [saving, setSaving] = useState(false);
+  const [typeFilter, setTypeFilter] = useState<string>("all");
+
+  const visibleProducts =
+    typeFilter === "all"
+      ? products
+      : products.filter((p) => p.product_type === typeFilter);
 
   function startAdd() {
     setDraft(EMPTY_DRAFT);
@@ -90,6 +99,7 @@ export function AdminProductsTable({
                   price: draft.price,
                   image_url: draft.imageUrl,
                   category: draft.category,
+                  product_type: draft.productType,
                   coupang_url: draft.coupangUrl,
                   sort_order: Number(draft.sortOrder) || 0,
                 }
@@ -119,6 +129,7 @@ export function AdminProductsTable({
           price: p.price,
           imageUrl: p.image_url,
           category: p.category,
+          productType: p.product_type,
           coupangUrl: p.coupang_url,
           sortOrder: p.sort_order,
           active: nextActive,
@@ -228,6 +239,22 @@ export function AdminProductsTable({
               </select>
             </div>
             <div>
+              <label className="text-sm text-mute">상품 유형</label>
+              <select
+                value={draft.productType}
+                onChange={(e) =>
+                  setDraft({ ...draft, productType: e.target.value })
+                }
+                className="mt-1 w-full rounded-xl border border-line px-3 py-2 text-sm outline-none focus:border-ink"
+              >
+                {PRODUCT_TYPES.map((t) => (
+                  <option key={t} value={t}>
+                    {t}
+                  </option>
+                ))}
+              </select>
+            </div>
+            <div>
               <label className="text-sm text-mute">노출 순서 (숫자가 작을수록 먼저)</label>
               <input
                 type="number"
@@ -260,8 +287,36 @@ export function AdminProductsTable({
         </div>
       )}
 
-      <div className="mt-8 flex flex-col gap-3">
-        {products.map((p) => (
+      <div className="mt-8 flex flex-wrap items-center gap-2">
+        <button
+          type="button"
+          onClick={() => setTypeFilter("all")}
+          className={`rounded-full border px-4 py-1.5 text-xs font-medium ${
+            typeFilter === "all"
+              ? "border-ink bg-ink text-paper"
+              : "border-line text-ink hover:bg-mist"
+          }`}
+        >
+          전체
+        </button>
+        {PRODUCT_TYPES.map((t) => (
+          <button
+            key={t}
+            type="button"
+            onClick={() => setTypeFilter(t)}
+            className={`rounded-full border px-4 py-1.5 text-xs font-medium ${
+              typeFilter === t
+                ? "border-ink bg-ink text-paper"
+                : "border-line text-ink hover:bg-mist"
+            }`}
+          >
+            {t}
+          </button>
+        ))}
+      </div>
+
+      <div className="mt-6 flex flex-col gap-3">
+        {visibleProducts.map((p) => (
           <div
             key={p.id}
             className="flex flex-wrap items-center gap-4 rounded-2xl border border-line p-4"
@@ -274,7 +329,8 @@ export function AdminProductsTable({
             <div className="min-w-0 flex-1">
               <p className="font-medium">{p.name}</p>
               <p className="text-sm text-mute">
-                {p.price} · {p.category || "카테고리 없음"}
+                {p.price} · {p.category || "카테고리 없음"} ·{" "}
+                {p.product_type || "유형 없음"}
               </p>
             </div>
             <button
@@ -305,9 +361,11 @@ export function AdminProductsTable({
           </div>
         ))}
 
-        {products.length === 0 && (
+        {visibleProducts.length === 0 && (
           <p className="text-sm text-mute">
-            아직 등록된 상품이 없습니다. "+ 상품 추가"로 시작해보세요.
+            {products.length === 0
+              ? '아직 등록된 상품이 없습니다. "+ 상품 추가"로 시작해보세요.'
+              : "이 유형에 해당하는 상품이 없습니다."}
           </p>
         )}
       </div>
