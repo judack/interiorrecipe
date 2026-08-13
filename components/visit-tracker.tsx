@@ -20,10 +20,17 @@ export function VisitTracker() {
     if (pathname.startsWith("/admin")) return;
 
     const visitorId = getOrCreateVisitorId();
+    const utmSource = new URLSearchParams(window.location.search).get(
+      "utm_source"
+    );
     fetch("/api/track-visit", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ path: pathname, visitorId }),
+      body: JSON.stringify({
+        path: pathname,
+        visitorId,
+        referrer: utmSource || document.referrer,
+      }),
       keepalive: true,
     }).catch(() => {});
   }, [pathname]);

@@ -55,8 +55,30 @@ async function getVisitStats(rangeDays: number | null) {
     LIMIT 366
   `;
 
+  const sourceRows = await sql`
+    SELECT
+      CASE
+        WHEN referrer = '' THEN '직접 방문 / 앱 내부'
+        WHEN referrer ILIKE '%instagram%' THEN '인스타그램'
+        WHEN referrer ILIKE '%youtube%' OR referrer ILIKE '%youtu.be%' THEN '유튜브'
+        WHEN referrer ILIKE '%naver%' THEN '네이버'
+        WHEN referrer ILIKE '%google%' THEN '구글'
+        WHEN referrer ILIKE '%kakao%' THEN '카카오톡'
+        ELSE '기타'
+      END AS source,
+      count(DISTINCT visitor_id) AS visitors
+    FROM page_views
+    WHERE created_at > ${cutoff.toISOString()}
+    GROUP BY source
+    ORDER BY visitors DESC
+  `;
+
   const s = summaryRows[0];
   const r = rangeRows[0];
+  const totalSourceVisitors = sourceRows.reduce(
+    (sum, row) => sum + Number(row.visitors),
+    0
+  );
 
   return {
     totalViews: Number(s.total_views),
@@ -70,6 +92,11 @@ async function getVisitStats(rangeDays: number | null) {
       views: Number(row.views),
       visitors: Number(row.visitors),
     })),
+    sources: sourceRows.map((row) => ({
+      label: row.source as string,
+      count: Number(row.visitors),
+    })),
+    totalSourceVisitors,
   };
 }
 
@@ -140,7 +167,7 @@ function BreakdownList({
 }) {
   return (
     <div>
-      <h3 className="text-base font-medium">{title}</h3>
+      {title && <h3 className="text-base font-medium">{title}</h3>}
       {items.length === 0 ? (
         <p className="mt-3 text-sm text-mute">아직 데이터가 없습니다.</p>
       ) : (
@@ -265,6 +292,22 @@ export default async function AdminStatsPage({
               아직 방문 데이터가 없습니다.
             </p>
           )}
+        </div>
+
+        <h2 className="mt-16 text-lg font-semibold tracking-tight">
+          {range.label} 유입 경로
+        </h2>
+        <p className="mt-2 text-sm text-mute">
+          어디서 사이트로 들어왔는지 방문자 기준으로 집계했어요. 인스타그램·유튜브
+          앱 내부 브라우저에서 클릭한 경우 출처가 전달되지 않아 "직접 방문 / 앱
+          내부"로 잡힐 수 있어요.
+        </p>
+        <div className="mt-6 max-w-xl">
+          <BreakdownList
+            title=""
+            items={stats.sources}
+            total={stats.totalSourceVisitors}
+          />
         </div>
 
         <h2 className="mt-16 text-lg font-semibold tracking-tight">

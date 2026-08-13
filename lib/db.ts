@@ -63,6 +63,9 @@ export async function ensurePageViewsTable() {
       visitor_id TEXT NOT NULL DEFAULT ''
     )
   `;
+  await sql`
+    ALTER TABLE page_views ADD COLUMN IF NOT EXISTS referrer TEXT NOT NULL DEFAULT ''
+  `;
 }
 
 export async function ensureProductsTable() {
