@@ -1,26 +1,26 @@
 import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
+import { ADMIN_SESSION_COOKIE, verifySessionToken } from "@/lib/admin-auth";
 
-export function proxy(request: NextRequest) {
-  const auth = request.headers.get("authorization");
+export async function proxy(request: NextRequest) {
+  const { pathname } = request.nextUrl;
 
-  if (auth) {
-    const [, encoded] = auth.split(" ");
-    const decoded = Buffer.from(encoded, "base64").toString();
-    const [user, password] = decoded.split(":");
-
-    if (
-      user === process.env.ADMIN_USER &&
-      password === process.env.ADMIN_PASSWORD
-    ) {
-      return NextResponse.next();
-    }
+  if (pathname === "/admin/login" || pathname === "/api/admin/login") {
+    return NextResponse.next();
   }
 
-  return new NextResponse("인증이 필요합니다.", {
-    status: 401,
-    headers: { "WWW-Authenticate": 'Basic realm="admin"' },
-  });
+  const token = request.cookies.get(ADMIN_SESSION_COOKIE)?.value;
+  const valid = await verifySessionToken(token);
+
+  if (valid) {
+    return NextResponse.next();
+  }
+
+  if (pathname.startsWith("/api/")) {
+    return NextResponse.json({ error: "인증이 필요합니다." }, { status: 401 });
+  }
+
+  return NextResponse.redirect(new URL("/admin/login", request.url));
 }
 
 export const config = {
