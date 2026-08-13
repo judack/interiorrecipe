@@ -1,5 +1,8 @@
 export const SITE = {
   name: "인테리어레시피",
+  // 검색엔진(네이버/구글) 등록, sitemap 생성 등에 쓰이는 실제 배포 주소입니다.
+  // 나중에 커스텀 도메인(interior-recipe.co.kr)이 연결되면 이 값을 바꿔주세요.
+  baseUrl: "https://interiorrecipe.vercel.app",
   // 실제 상담 신청 채널(이메일, 폼, 카카오톡 채널 등)이 정해지면 이 값만 바꿔주세요.
   // 모든 상담 신청 버튼이 이 링크 하나를 함께 사용합니다.
   contactHref: "mailto:hello@interiorrecipe.kr",
