@@ -54,11 +54,13 @@ export function AdminProductsTable({
   function startAdd() {
     setDraft(EMPTY_DRAFT);
     setEditingId("new");
+    window.scrollTo({ top: 0, behavior: "smooth" });
   }
 
   function startEdit(p: Product) {
     setDraft(toDraft(p));
     setEditingId(p.id);
+    window.scrollTo({ top: 0, behavior: "smooth" });
   }
 
   function cancelEdit() {
