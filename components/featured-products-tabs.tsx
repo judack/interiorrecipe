@@ -1,12 +1,32 @@
 "use client";
 
-import { useState } from "react";
-import { CATEGORIES, type Product } from "@/lib/product";
+import { useMemo, useState } from "react";
+import { CATEGORIES, PRODUCT_TYPES, type Product } from "@/lib/product";
 import { Reveal } from "@/components/reveal";
 
 export function FeaturedProductsTabs({ products }: { products: Product[] }) {
   const [activeCategory, setActiveCategory] = useState<string>(CATEGORIES[0]);
-  const filtered = products.filter((p) => p.category === activeCategory);
+  const [activeType, setActiveType] = useState<string>("all");
+
+  const byCategory = products.filter((p) => p.category === activeCategory);
+
+  const availableTypes = useMemo(
+    () =>
+      PRODUCT_TYPES.filter((t) =>
+        byCategory.some((p) => p.product_type === t)
+      ),
+    [byCategory]
+  );
+
+  const filtered =
+    activeType === "all"
+      ? byCategory
+      : byCategory.filter((p) => p.product_type === activeType);
+
+  function selectCategory(category: string) {
+    setActiveCategory(category);
+    setActiveType("all");
+  }
 
   return (
     <div>
@@ -15,7 +35,7 @@ export function FeaturedProductsTabs({ products }: { products: Product[] }) {
           <button
             key={category}
             type="button"
-            onClick={() => setActiveCategory(category)}
+            onClick={() => selectCategory(category)}
             className={`rounded-full border px-4 py-2 text-sm font-medium transition-colors ${
               activeCategory === category
                 ? "border-ink bg-ink text-paper"
@@ -26,6 +46,36 @@ export function FeaturedProductsTabs({ products }: { products: Product[] }) {
           </button>
         ))}
       </div>
+
+      {availableTypes.length > 1 && (
+        <div className="mt-4 flex flex-wrap gap-2">
+          <button
+            type="button"
+            onClick={() => setActiveType("all")}
+            className={`rounded-full border px-3 py-1.5 text-xs font-medium transition-colors ${
+              activeType === "all"
+                ? "border-ink bg-mist text-ink"
+                : "border-line text-mute hover:bg-mist"
+            }`}
+          >
+            전체
+          </button>
+          {availableTypes.map((type) => (
+            <button
+              key={type}
+              type="button"
+              onClick={() => setActiveType(type)}
+              className={`rounded-full border px-3 py-1.5 text-xs font-medium transition-colors ${
+                activeType === type
+                  ? "border-ink bg-mist text-ink"
+                  : "border-line text-mute hover:bg-mist"
+              }`}
+            >
+              {type}
+            </button>
+          ))}
+        </div>
+      )}
 
       {filtered.length === 0 ? (
         <p className="mt-16 text-base text-mute">
