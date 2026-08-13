@@ -1,9 +1,9 @@
 export const CATEGORIES = [
-  "특가 할인템",
-  "첫자취를 위한 가구",
   "컨텐츠에 사용된 가구",
+  "첫자취를 위한 가구",
   "자취꿀템",
   "자취식품창고",
+  "특가 할인템",
 ] as const;
 export type Category = (typeof CATEGORIES)[number];
 
