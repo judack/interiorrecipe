@@ -17,7 +17,130 @@ function resolveRange(key: string | undefined) {
   return RANGE_OPTIONS.find((r) => r.key === key) ?? RANGE_OPTIONS[1];
 }
 
-async function getVisitStats(rangeDays: number | null) {
+const SOURCE_OPTIONS = [
+  { key: "all", label: "전체" },
+  { key: "instagram", label: "인스타그램" },
+  { key: "youtube", label: "유튜브" },
+  { key: "naver", label: "네이버" },
+  { key: "google", label: "구글" },
+  { key: "kakao", label: "카카오톡" },
+  { key: "direct", label: "직접 방문 / 앱 내부" },
+] as const;
+
+function resolveSource(key: string | undefined) {
+  return SOURCE_OPTIONS.find((s) => s.key === key) ?? SOURCE_OPTIONS[0];
+}
+
+async function getRangeAndDaily(cutoffIso: string, sourceKey: string) {
+  if (sourceKey === "direct") {
+    const rangeRows = await sql`
+      SELECT count(*) AS views, count(DISTINCT visitor_id) AS visitors
+      FROM page_views
+      WHERE created_at > ${cutoffIso} AND referrer = ''
+    `;
+    const dailyRows = await sql`
+      SELECT (created_at AT TIME ZONE 'Asia/Seoul')::date AS day,
+        count(*) AS views, count(DISTINCT visitor_id) AS visitors
+      FROM page_views
+      WHERE created_at > ${cutoffIso} AND referrer = ''
+      GROUP BY day ORDER BY day DESC LIMIT 366
+    `;
+    return { rangeRows, dailyRows };
+  }
+  if (sourceKey === "instagram") {
+    const rangeRows = await sql`
+      SELECT count(*) AS views, count(DISTINCT visitor_id) AS visitors
+      FROM page_views
+      WHERE created_at > ${cutoffIso} AND referrer ILIKE '%instagram%'
+    `;
+    const dailyRows = await sql`
+      SELECT (created_at AT TIME ZONE 'Asia/Seoul')::date AS day,
+        count(*) AS views, count(DISTINCT visitor_id) AS visitors
+      FROM page_views
+      WHERE created_at > ${cutoffIso} AND referrer ILIKE '%instagram%'
+      GROUP BY day ORDER BY day DESC LIMIT 366
+    `;
+    return { rangeRows, dailyRows };
+  }
+  if (sourceKey === "youtube") {
+    const rangeRows = await sql`
+      SELECT count(*) AS views, count(DISTINCT visitor_id) AS visitors
+      FROM page_views
+      WHERE created_at > ${cutoffIso}
+        AND (referrer ILIKE '%youtube%' OR referrer ILIKE '%youtu.be%')
+    `;
+    const dailyRows = await sql`
+      SELECT (created_at AT TIME ZONE 'Asia/Seoul')::date AS day,
+        count(*) AS views, count(DISTINCT visitor_id) AS visitors
+      FROM page_views
+      WHERE created_at > ${cutoffIso}
+        AND (referrer ILIKE '%youtube%' OR referrer ILIKE '%youtu.be%')
+      GROUP BY day ORDER BY day DESC LIMIT 366
+    `;
+    return { rangeRows, dailyRows };
+  }
+  if (sourceKey === "naver") {
+    const rangeRows = await sql`
+      SELECT count(*) AS views, count(DISTINCT visitor_id) AS visitors
+      FROM page_views
+      WHERE created_at > ${cutoffIso} AND referrer ILIKE '%naver%'
+    `;
+    const dailyRows = await sql`
+      SELECT (created_at AT TIME ZONE 'Asia/Seoul')::date AS day,
+        count(*) AS views, count(DISTINCT visitor_id) AS visitors
+      FROM page_views
+      WHERE created_at > ${cutoffIso} AND referrer ILIKE '%naver%'
+      GROUP BY day ORDER BY day DESC LIMIT 366
+    `;
+    return { rangeRows, dailyRows };
+  }
+  if (sourceKey === "google") {
+    const rangeRows = await sql`
+      SELECT count(*) AS views, count(DISTINCT visitor_id) AS visitors
+      FROM page_views
+      WHERE created_at > ${cutoffIso} AND referrer ILIKE '%google%'
+    `;
+    const dailyRows = await sql`
+      SELECT (created_at AT TIME ZONE 'Asia/Seoul')::date AS day,
+        count(*) AS views, count(DISTINCT visitor_id) AS visitors
+      FROM page_views
+      WHERE created_at > ${cutoffIso} AND referrer ILIKE '%google%'
+      GROUP BY day ORDER BY day DESC LIMIT 366
+    `;
+    return { rangeRows, dailyRows };
+  }
+  if (sourceKey === "kakao") {
+    const rangeRows = await sql`
+      SELECT count(*) AS views, count(DISTINCT visitor_id) AS visitors
+      FROM page_views
+      WHERE created_at > ${cutoffIso} AND referrer ILIKE '%kakao%'
+    `;
+    const dailyRows = await sql`
+      SELECT (created_at AT TIME ZONE 'Asia/Seoul')::date AS day,
+        count(*) AS views, count(DISTINCT visitor_id) AS visitors
+      FROM page_views
+      WHERE created_at > ${cutoffIso} AND referrer ILIKE '%kakao%'
+      GROUP BY day ORDER BY day DESC LIMIT 366
+    `;
+    return { rangeRows, dailyRows };
+  }
+
+  const rangeRows = await sql`
+    SELECT count(*) AS views, count(DISTINCT visitor_id) AS visitors
+    FROM page_views
+    WHERE created_at > ${cutoffIso}
+  `;
+  const dailyRows = await sql`
+    SELECT (created_at AT TIME ZONE 'Asia/Seoul')::date AS day,
+      count(*) AS views, count(DISTINCT visitor_id) AS visitors
+    FROM page_views
+    WHERE created_at > ${cutoffIso}
+    GROUP BY day ORDER BY day DESC LIMIT 366
+  `;
+  return { rangeRows, dailyRows };
+}
+
+async function getVisitStats(rangeDays: number | null, sourceKey: string) {
   await ensurePageViewsTable();
 
   const summaryRows = await sql`
@@ -37,23 +160,10 @@ async function getVisitStats(rangeDays: number | null) {
       ? new Date(0)
       : new Date(Date.now() - rangeDays * 24 * 60 * 60 * 1000);
 
-  const rangeRows = await sql`
-    SELECT count(*) AS views, count(DISTINCT visitor_id) AS visitors
-    FROM page_views
-    WHERE created_at > ${cutoff.toISOString()}
-  `;
-
-  const dailyRows = await sql`
-    SELECT
-      (created_at AT TIME ZONE 'Asia/Seoul')::date AS day,
-      count(*) AS views,
-      count(DISTINCT visitor_id) AS visitors
-    FROM page_views
-    WHERE created_at > ${cutoff.toISOString()}
-    GROUP BY day
-    ORDER BY day DESC
-    LIMIT 366
-  `;
+  const { rangeRows, dailyRows } = await getRangeAndDaily(
+    cutoff.toISOString(),
+    sourceKey
+  );
 
   const sourceRows = await sql`
     SELECT
@@ -200,11 +310,12 @@ function BreakdownList({
 export default async function AdminStatsPage({
   searchParams,
 }: {
-  searchParams: Promise<{ range?: string }>;
+  searchParams: Promise<{ range?: string; source?: string }>;
 }) {
-  const { range: rangeKey } = await searchParams;
+  const { range: rangeKey, source: sourceKey } = await searchParams;
   const range = resolveRange(rangeKey);
-  const stats = await getVisitStats(range.days);
+  const source = resolveSource(sourceKey);
+  const stats = await getVisitStats(range.days, source.key);
   const demographics = await getApplicantDemographics();
 
   return (
@@ -240,7 +351,7 @@ export default async function AdminStatsPage({
           {RANGE_OPTIONS.map((opt) => (
             <Link
               key={opt.key}
-              href={`/admin/stats?range=${opt.key}`}
+              href={`/admin/stats?range=${opt.key}&source=${source.key}`}
               className={`rounded-full border px-4 py-2 text-sm font-medium transition-colors ${
                 opt.key === range.key
                   ? "border-ink bg-ink text-paper"
@@ -252,13 +363,36 @@ export default async function AdminStatsPage({
           ))}
         </div>
 
+        <p className="mt-6 text-sm text-mute">유입 경로별로 따로 볼 수 있어요:</p>
+        <div className="mt-3 flex flex-wrap gap-2">
+          {SOURCE_OPTIONS.map((opt) => (
+            <Link
+              key={opt.key}
+              href={`/admin/stats?range=${range.key}&source=${opt.key}`}
+              className={`rounded-full border px-3 py-1.5 text-xs font-medium transition-colors ${
+                opt.key === source.key
+                  ? "border-ink bg-mist text-ink"
+                  : "border-line text-mute hover:bg-mist"
+              }`}
+            >
+              {opt.label}
+            </Link>
+          ))}
+        </div>
+
         <div className="mt-6 grid grid-cols-2 gap-4 md:w-1/2">
-          <StatCard label={`${range.label} 방문자`} value={stats.rangeVisitors} />
-          <StatCard label={`${range.label} 조회수`} value={stats.rangeViews} />
+          <StatCard
+            label={`${range.label} 방문자 (${source.label})`}
+            value={stats.rangeVisitors}
+          />
+          <StatCard
+            label={`${range.label} 조회수 (${source.label})`}
+            value={stats.rangeViews}
+          />
         </div>
 
         <h2 className="mt-10 text-lg font-semibold tracking-tight">
-          {range.label} 일별 현황
+          {range.label} 일별 현황 ({source.label})
         </h2>
         <div className="mt-4 overflow-x-auto">
           <table className="w-full border-collapse text-left text-sm">
