@@ -1,16 +1,19 @@
 import { ensureProductsTable, sql } from "@/lib/db";
-import type { Product } from "@/lib/product";
+import type { FeaturedProduct } from "@/lib/product";
 import { Reveal } from "@/components/reveal";
 import { FeaturedProductsTabs } from "@/components/featured-products-tabs";
 
-async function getFeaturedProducts(): Promise<Product[]> {
+async function getFeaturedProducts(): Promise<FeaturedProduct[]> {
   await ensureProductsTable();
   const rows = await sql`
-    SELECT * FROM products
+    SELECT * FROM (
+      SELECT *, ROW_NUMBER() OVER (ORDER BY created_at ASC) AS reg_number
+      FROM products
+    ) numbered
     WHERE active = true
     ORDER BY sort_order ASC, created_at DESC
   `;
-  return rows as Product[];
+  return rows.map((r) => ({ ...r, reg_number: Number(r.reg_number) })) as FeaturedProduct[];
 }
 
 export async function FeaturedProductsSection() {

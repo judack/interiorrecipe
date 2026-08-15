@@ -52,3 +52,5 @@ export type Product = {
   sort_order: number;
   active: boolean;
 };
+
+export type FeaturedProduct = Product & { reg_number: number };

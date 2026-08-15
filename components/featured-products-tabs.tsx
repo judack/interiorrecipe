@@ -1,10 +1,14 @@
 "use client";
 
 import { useMemo, useState } from "react";
-import { CATEGORIES, PRODUCT_TYPES, type Product } from "@/lib/product";
+import { CATEGORIES, PRODUCT_TYPES, type FeaturedProduct } from "@/lib/product";
 import { Reveal } from "@/components/reveal";
 
-export function FeaturedProductsTabs({ products }: { products: Product[] }) {
+export function FeaturedProductsTabs({
+  products,
+}: {
+  products: FeaturedProduct[];
+}) {
   const [activeCategory, setActiveCategory] = useState<string>(CATEGORIES[0]);
   const [activeType, setActiveType] = useState<string>("all");
 
@@ -91,12 +95,15 @@ export function FeaturedProductsTabs({ products }: { products: Product[] }) {
                 rel="noopener noreferrer sponsored"
                 className="group block"
               >
-                <div className="aspect-square overflow-hidden rounded-2xl bg-mist">
+                <div className="relative aspect-square overflow-hidden rounded-2xl bg-mist">
                   <img
                     src={product.image_url}
                     alt={product.name}
                     className="h-full w-full object-cover transition-transform group-hover:scale-105"
                   />
+                  <span className="absolute top-2 left-2 rounded-full bg-ink/80 px-2.5 py-1 text-xs font-medium text-paper backdrop-blur-sm">
+                    #{product.reg_number}
+                  </span>
                 </div>
                 <p className="mt-3 text-sm font-medium">{product.name}</p>
                 <p className="mt-1 text-sm text-mute">{product.price}</p>
