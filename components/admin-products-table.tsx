@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import { CATEGORIES, PRODUCT_TYPES, type Product } from "@/lib/product";
 
 type Draft = {
@@ -45,6 +45,16 @@ export function AdminProductsTable({
   const [draft, setDraft] = useState<Draft>(EMPTY_DRAFT);
   const [saving, setSaving] = useState(false);
   const [typeFilter, setTypeFilter] = useState<string>("all");
+
+  const registrationOrder = useMemo(() => {
+    const byCreatedAt = [...products].sort(
+      (a, b) =>
+        new Date(a.created_at).getTime() - new Date(b.created_at).getTime()
+    );
+    const map = new Map<number, number>();
+    byCreatedAt.forEach((p, i) => map.set(p.id, i + 1));
+    return map;
+  }, [products]);
 
   const visibleProducts =
     typeFilter === "all"
@@ -323,6 +333,9 @@ export function AdminProductsTable({
             key={p.id}
             className="flex flex-wrap items-center gap-4 rounded-2xl border border-line p-4"
           >
+            <span className="w-8 shrink-0 text-sm font-medium text-mute">
+              #{registrationOrder.get(p.id)}
+            </span>
             <img
               src={p.image_url}
               alt=""
