@@ -5,6 +5,8 @@ import { AdminNav } from "@/components/admin-nav";
 
 export const dynamic = "force-dynamic";
 
+const SITE_HOST = new URL(SITE.baseUrl).host;
+
 const RANGE_OPTIONS = [
   { key: "15", label: "최근 15일", days: 15 },
   { key: "30", label: "최근 30일", days: 30 },
@@ -51,13 +53,15 @@ async function getRangeAndDaily(cutoffIso: string, sourceKey: string) {
     const rangeRows = await sql`
       SELECT count(*) AS views, count(DISTINCT visitor_id) AS visitors
       FROM page_views
-      WHERE created_at > ${cutoffIso} AND referrer ILIKE '%instagram%'
+      WHERE created_at > ${cutoffIso}
+        AND (referrer ILIKE '%instagram%' OR referrer IN ('ig', 'instagram') OR referrer ILIKE '%fbclid%')
     `;
     const dailyRows = await sql`
       SELECT (created_at AT TIME ZONE 'Asia/Seoul')::date AS day,
         count(*) AS views, count(DISTINCT visitor_id) AS visitors
       FROM page_views
-      WHERE created_at > ${cutoffIso} AND referrer ILIKE '%instagram%'
+      WHERE created_at > ${cutoffIso}
+        AND (referrer ILIKE '%instagram%' OR referrer IN ('ig', 'instagram') OR referrer ILIKE '%fbclid%')
       GROUP BY day ORDER BY day DESC LIMIT 366
     `;
     return { rangeRows, dailyRows };
@@ -67,14 +71,14 @@ async function getRangeAndDaily(cutoffIso: string, sourceKey: string) {
       SELECT count(*) AS views, count(DISTINCT visitor_id) AS visitors
       FROM page_views
       WHERE created_at > ${cutoffIso}
-        AND (referrer ILIKE '%youtube%' OR referrer ILIKE '%youtu.be%')
+        AND (referrer ILIKE '%youtube%' OR referrer ILIKE '%youtu.be%' OR referrer IN ('yt', 'youtube'))
     `;
     const dailyRows = await sql`
       SELECT (created_at AT TIME ZONE 'Asia/Seoul')::date AS day,
         count(*) AS views, count(DISTINCT visitor_id) AS visitors
       FROM page_views
       WHERE created_at > ${cutoffIso}
-        AND (referrer ILIKE '%youtube%' OR referrer ILIKE '%youtu.be%')
+        AND (referrer ILIKE '%youtube%' OR referrer ILIKE '%youtu.be%' OR referrer IN ('yt', 'youtube'))
       GROUP BY day ORDER BY day DESC LIMIT 366
     `;
     return { rangeRows, dailyRows };
@@ -169,11 +173,13 @@ async function getVisitStats(rangeDays: number | null, sourceKey: string) {
     SELECT
       CASE
         WHEN referrer = '' THEN '직접 방문 / 앱 내부'
-        WHEN referrer ILIKE '%instagram%' THEN '인스타그램'
-        WHEN referrer ILIKE '%youtube%' OR referrer ILIKE '%youtu.be%' THEN '유튜브'
+        WHEN referrer ILIKE '%instagram%' OR referrer IN ('ig', 'instagram')
+          OR referrer ILIKE '%fbclid%' THEN '인스타그램'
+        WHEN referrer ILIKE '%youtube%' OR referrer ILIKE '%youtu.be%' OR referrer IN ('yt', 'youtube') THEN '유튜브'
         WHEN referrer ILIKE '%naver%' THEN '네이버'
         WHEN referrer ILIKE '%google%' THEN '구글'
         WHEN referrer ILIKE '%kakao%' THEN '카카오톡'
+        WHEN referrer ILIKE ${'%' + SITE_HOST + '%'} THEN '사이트 내 이동 (외부 유입 아님)'
         ELSE '기타'
       END AS source,
       count(DISTINCT visitor_id) AS visitors
