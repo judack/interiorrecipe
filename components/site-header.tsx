@@ -37,14 +37,6 @@ export function SiteHeader() {
 
         <div className="hidden items-center gap-3 md:flex">
           <a
-            href={SITE.shopHref}
-            target="_blank"
-            rel="noopener noreferrer sponsored"
-            className="rounded-full border border-line px-5 py-2 text-sm font-medium text-ink transition-colors hover:bg-mist"
-          >
-            쇼핑 스토어
-          </a>
-          <a
             href={SITE.reservationHref}
             className="rounded-full bg-ink px-5 py-2 text-sm font-medium text-paper transition-opacity hover:opacity-80"
           >
@@ -86,18 +78,9 @@ export function SiteHeader() {
               </a>
             ))}
             <a
-              href={SITE.shopHref}
-              target="_blank"
-              rel="noopener noreferrer sponsored"
-              onClick={() => setOpen(false)}
-              className="mt-2 rounded-full border border-line px-5 py-3 text-center text-sm font-medium text-ink"
-            >
-              쇼핑 스토어
-            </a>
-            <a
               href={SITE.reservationHref}
               onClick={() => setOpen(false)}
-              className="rounded-full bg-ink px-5 py-3 text-center text-sm font-medium text-paper"
+              className="mt-2 rounded-full bg-ink px-5 py-3 text-center text-sm font-medium text-paper"
             >
               상담 신청
             </a>
