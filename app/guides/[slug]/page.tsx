@@ -146,13 +146,13 @@ export default async function GuidePage({
               <h2 className="text-xl font-semibold tracking-tight">
                 관련 상품
               </h2>
-              <div className="mt-6">
-                <FeaturedProductsTabs products={products} source="guide_detail" />
-              </div>
-              <p className="mt-6 text-xs leading-relaxed text-mute">
+              <p className="mt-2 text-xs leading-relaxed text-mute">
                 *이 포스팅은 쿠팡 파트너스 활동의 일환으로, 이에 따른 일정액의
                 수수료를 제공받습니다.
               </p>
+              <div className="mt-6">
+                <FeaturedProductsTabs products={products} source="guide_detail" />
+              </div>
             </div>
           )}
 
