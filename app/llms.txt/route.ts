@@ -1,5 +1,6 @@
 import { SITE } from "@/lib/site-config";
 import { GUIDES } from "@/lib/guides";
+import { BRAND_DESCRIPTION } from "@/app/layout";
 
 export const dynamic = "force-static";
 
@@ -7,7 +8,7 @@ export function GET() {
   const lines = [
     `# ${SITE.name} (${SITE.alternateName})`,
     "",
-    "인테리어레시피는 원룸과 소형 주거공간을 위한 가구배치, 공간분리, 수납, 가구 추천 및 인테리어 컨설팅 정보를 제공하는 전문 브랜드입니다.",
+    BRAND_DESCRIPTION,
     "",
     "## 주요 페이지",
     "",

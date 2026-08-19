@@ -60,9 +60,9 @@ function List({
     <div className="mt-10">
       <h2 className="text-xl font-semibold tracking-tight">{title}</h2>
       <Tag className="mt-4 flex flex-col gap-2.5">
-        {items.map((item) => (
+        {items.map((item, i) => (
           <li key={item} className="flex items-baseline gap-2 text-base leading-relaxed">
-            <span className="text-mute">·</span>
+            <span className="text-mute">{ordered ? `${i + 1}.` : "·"}</span>
             {item}
           </li>
         ))}
@@ -131,6 +131,7 @@ export default async function GuidePage({
             {guide.directAnswer}
           </p>
 
+          <List title="적용 순서" items={guide.steps} ordered />
           <List title="핵심 배치 원칙" items={guide.corePrinciples} />
           <List title="추천 배치" items={guide.recommended} />
           <List title="피해야 할 배치" items={guide.avoid} />
@@ -166,6 +167,30 @@ export default async function GuidePage({
                   <RelatedGuideLink key={g.slug} slug={g.slug} fromSlug={guide.slug}>
                     {g.h1}
                   </RelatedGuideLink>
+                ))}
+              </div>
+            </div>
+          )}
+
+          <div className="mt-16 border-t border-line pt-10">
+            <h2 className="text-xl font-semibold tracking-tight">핵심 요약</h2>
+            <p className="mt-4 text-base leading-relaxed">{guide.summary}</p>
+          </div>
+
+          {guide.sources && guide.sources.length > 0 && (
+            <div className="mt-16 border-t border-line pt-10">
+              <h2 className="text-xl font-semibold tracking-tight">출처</h2>
+              <div className="mt-4 flex flex-col gap-2">
+                {guide.sources.map((source) => (
+                  <a
+                    key={source.href}
+                    href={source.href}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="text-sm text-ink underline underline-offset-4 hover:no-underline"
+                  >
+                    {source.label}
+                  </a>
                 ))}
               </div>
             </div>

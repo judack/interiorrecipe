@@ -7,10 +7,10 @@ import { SITE, SOCIAL_LINKS } from "@/lib/site-config";
 
 export const TITLE = "인테리어레시피 | 원룸 가구배치·수납 인테리어 컨설팅";
 export const DESCRIPTION =
-  "원룸과 소형 주거공간의 가구배치, 수납 방법과 맞춤 인테리어 컨설팅을 만나보세요. 사진 한 장이면 시작할 수 있어요.";
+  "원룸과 소형 주거공간의 가구배치, 공간분리, 수납 문제를 콘텐츠와 공간 컨설팅으로 해결해요. 사진 한 장이면 시작할 수 있어요.";
 
-const BRAND_DESCRIPTION =
-  "인테리어레시피는 원룸과 소형 주거공간을 위한 가구배치, 공간분리, 수납, 가구 추천 및 인테리어 컨설팅 정보를 제공하는 전문 브랜드입니다.";
+export const BRAND_DESCRIPTION =
+  "인테리어레시피는 원룸과 소형 주거공간의 가구 배치, 공간 분리, 수납 문제를 해결하는 인테리어 콘텐츠 및 공간 컨설팅 브랜드입니다.";
 
 export const metadata: Metadata = {
   metadataBase: new URL(SITE.baseUrl),

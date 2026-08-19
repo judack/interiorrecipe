@@ -1,6 +1,7 @@
 import { SITE } from "@/lib/site-config";
 import { Reveal } from "@/components/reveal";
 import { ConsultingCtaLink } from "@/components/consulting-cta-link";
+import { BRAND_DESCRIPTION } from "@/app/layout";
 
 export function HeroSection() {
   return (
@@ -37,8 +38,7 @@ export function HeroSection() {
 
         <Reveal delay={160}>
           <p className="mt-8 max-w-md text-lg leading-relaxed text-white/80 md:text-xl">
-            인테리어레시피는 원룸과 소형 주거공간의 구조, 생활 습관, 예산을
-            분석해 나에게 맞는 가구배치와 제품을 제안합니다.
+            {BRAND_DESCRIPTION}
           </p>
         </Reveal>
 
