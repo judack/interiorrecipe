@@ -1,3 +1,4 @@
+import Link from "next/link";
 import { Reveal } from "@/components/reveal";
 import { SITE } from "@/lib/site-config";
 
@@ -58,6 +59,12 @@ export function SpaceGuideSection() {
           <p className="mt-4 max-w-xl text-base text-mute">
             자주 물어보시는 공간 고민에 먼저 답해드려요.
           </p>
+          <Link
+            href="/guides"
+            className="mt-4 inline-flex items-center text-sm font-medium text-ink underline underline-offset-4 hover:no-underline"
+          >
+            평형별·주제별 가이드 전체 보기 →
+          </Link>
         </Reveal>
 
         <div className="mt-16 grid grid-cols-1 gap-6 md:mt-20 md:grid-cols-2">
