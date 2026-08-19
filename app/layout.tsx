@@ -4,9 +4,9 @@ import { VisitTracker } from "@/components/visit-tracker";
 import { JsonLd } from "@/components/json-ld";
 import { SITE, SOCIAL_LINKS } from "@/lib/site-config";
 
-const TITLE = "인테리어레시피 | 내 방에 맞는 인테리어 솔루션";
+const TITLE = "인테리어레시피 | 원룸 가구배치·수납 인테리어 컨설팅";
 const DESCRIPTION =
-  "사진 한 장으로 시작하는 맞춤 공간 솔루션. 1인 가구와 2030세대를 위한 현실적인 가구배치 및 인테리어 컨설팅, 인테리어레시피.";
+  "원룸과 소형 주거공간의 가구배치, 수납 방법과 맞춤 인테리어 컨설팅을 만나보세요. 사진 한 장이면 시작할 수 있어요.";
 
 export const metadata: Metadata = {
   metadataBase: new URL(SITE.baseUrl),
