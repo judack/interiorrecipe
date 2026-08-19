@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import "./globals.css";
 import { VisitTracker } from "@/components/visit-tracker";
+import { EventTracker } from "@/components/event-tracker";
 import { JsonLd } from "@/components/json-ld";
 import { SITE, SOCIAL_LINKS } from "@/lib/site-config";
 
@@ -70,6 +71,7 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
         <JsonLd data={organizationJsonLd} />
         <JsonLd data={websiteJsonLd} />
         <VisitTracker />
+        <EventTracker />
         {children}
       </body>
     </html>

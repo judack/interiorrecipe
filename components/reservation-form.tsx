@@ -1,8 +1,9 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { upload } from "@vercel/blob/client";
 import { SITE } from "@/lib/site-config";
+import { trackEvent } from "@/lib/analytics";
 
 type PhotoUpload = {
   name: string;
@@ -258,6 +259,16 @@ export function ReservationForm() {
   );
   const [mbtiIndex, setMbtiIndex] = useState(0);
   const [mbtiAnswers, setMbtiAnswers] = useState<string[]>([]);
+
+  useEffect(() => {
+    trackEvent("consulting_start", { page_slug: "/reservation" });
+  }, []);
+
+  useEffect(() => {
+    if (status === "success") {
+      trackEvent("consulting_complete", { page_slug: "/reservation" });
+    }
+  }, [status]);
 
   const step1Done =
     form.serviceType &&

@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { NAV_LINKS, SITE } from "@/lib/site-config";
+import { ConsultingCtaLink } from "@/components/consulting-cta-link";
 
 export function SiteHeader() {
   const [open, setOpen] = useState(false);
@@ -36,12 +37,12 @@ export function SiteHeader() {
         </nav>
 
         <div className="hidden items-center gap-3 md:flex">
-          <a
-            href={SITE.reservationHref}
+          <ConsultingCtaLink
+            location="nav"
             className="rounded-full bg-ink px-5 py-2 text-sm font-medium text-paper transition-opacity hover:opacity-80"
           >
             상담 신청
-          </a>
+          </ConsultingCtaLink>
         </div>
 
         <button
@@ -77,13 +78,13 @@ export function SiteHeader() {
                 {link.label}
               </a>
             ))}
-            <a
-              href={SITE.reservationHref}
+            <ConsultingCtaLink
+              location="nav_mobile"
               onClick={() => setOpen(false)}
               className="mt-2 rounded-full bg-ink px-5 py-3 text-center text-sm font-medium text-paper"
             >
               상담 신청
-            </a>
+            </ConsultingCtaLink>
           </nav>
         </div>
       )}

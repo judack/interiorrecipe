@@ -48,9 +48,8 @@ export function SiteFooter() {
           © {new Date().getFullYear()} {SITE.name}. All rights reserved.
         </p>
         <p className="mt-2 text-xs leading-relaxed text-mute">
-          이 사이트의 쇼핑 스토어 및 상품 링크는 쿠팡 파트너스 활동의
-          일환으로 제공되며, 이에 따른 일정액의 수수료를 제공받을 수
-          있습니다.
+          *이 포스팅은 쿠팡 파트너스 활동의 일환으로, 이에 따른 일정액의
+          수수료를 제공받습니다.
         </p>
       </div>
     </footer>

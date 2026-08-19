@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { Reveal } from "@/components/reveal";
-import { SITE } from "@/lib/site-config";
+import { ConsultingCtaLink } from "@/components/consulting-cta-link";
 
 export const GUIDE_ITEMS = [
   {
@@ -83,12 +83,12 @@ export function SpaceGuideSection() {
                   {item.apply}
                 </p>
                 <p className="mt-4 text-xs text-mute">{item.related}</p>
-                <a
-                  href={SITE.reservationHref}
+                <ConsultingCtaLink
+                  location="space_guide"
                   className="mt-6 inline-flex w-fit items-center rounded-full border border-line px-5 py-2.5 text-sm font-medium text-ink transition-colors hover:bg-mist"
                 >
                   내 공간 컨설팅 신청하기
-                </a>
+                </ConsultingCtaLink>
               </div>
             </Reveal>
           ))}

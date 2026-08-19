@@ -68,6 +68,19 @@ export async function ensurePageViewsTable() {
   `;
 }
 
+export async function ensureAnalyticsEventsTable() {
+  await sql`
+    CREATE TABLE IF NOT EXISTS analytics_events (
+      id SERIAL PRIMARY KEY,
+      created_at TIMESTAMPTZ NOT NULL DEFAULT now(),
+      event_name TEXT NOT NULL DEFAULT '',
+      visitor_id TEXT NOT NULL DEFAULT '',
+      path TEXT NOT NULL DEFAULT '',
+      properties JSONB NOT NULL DEFAULT '{}'::jsonb
+    )
+  `;
+}
+
 export async function ensureProductsTable() {
   await sql`
     CREATE TABLE IF NOT EXISTS products (

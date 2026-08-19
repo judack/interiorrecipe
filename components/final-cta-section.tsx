@@ -1,5 +1,5 @@
-import { SITE } from "@/lib/site-config";
 import { Reveal } from "@/components/reveal";
+import { ConsultingCtaLink } from "@/components/consulting-cta-link";
 
 export function FinalCtaSection() {
   return (
@@ -14,12 +14,12 @@ export function FinalCtaSection() {
         </Reveal>
 
         <Reveal delay={120}>
-          <a
-            href={SITE.reservationHref}
+          <ConsultingCtaLink
+            location="final_cta"
             className="mt-12 inline-flex items-center rounded-full bg-paper px-8 py-4 text-base font-medium text-ink transition-opacity hover:opacity-80"
           >
             컨설팅 시작하기
-          </a>
+          </ConsultingCtaLink>
         </Reveal>
       </div>
     </section>

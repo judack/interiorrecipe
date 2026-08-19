@@ -1,12 +1,13 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
-import Link from "next/link";
 import { SiteHeader } from "@/components/site-header";
 import { SiteFooter } from "@/components/site-footer";
 import { SocialQuickMenu } from "@/components/social-quick-menu";
 import { Breadcrumb } from "@/components/breadcrumb";
 import { JsonLd } from "@/components/json-ld";
 import { FeaturedProductsTabs } from "@/components/featured-products-tabs";
+import { RelatedGuideLink } from "@/components/related-guide-link";
+import { ConsultingCtaLink } from "@/components/consulting-cta-link";
 import { GUIDES, getGuideBySlug } from "@/lib/guides";
 import { getGuideProducts } from "@/lib/guide-products";
 import { SITE } from "@/lib/site-config";
@@ -146,8 +147,12 @@ export default async function GuidePage({
                 관련 상품
               </h2>
               <div className="mt-6">
-                <FeaturedProductsTabs products={products} />
+                <FeaturedProductsTabs products={products} source="guide_detail" />
               </div>
+              <p className="mt-6 text-xs leading-relaxed text-mute">
+                *이 포스팅은 쿠팡 파트너스 활동의 일환으로, 이에 따른 일정액의
+                수수료를 제공받습니다.
+              </p>
             </div>
           )}
 
@@ -158,13 +163,9 @@ export default async function GuidePage({
               </h2>
               <div className="mt-4 flex flex-col gap-2">
                 {relatedGuides.map((g) => (
-                  <Link
-                    key={g.slug}
-                    href={`/guides/${g.slug}`}
-                    className="text-base text-ink underline underline-offset-4 hover:no-underline"
-                  >
+                  <RelatedGuideLink key={g.slug} slug={g.slug} fromSlug={guide.slug}>
                     {g.h1}
-                  </Link>
+                  </RelatedGuideLink>
                 ))}
               </div>
             </div>
@@ -174,12 +175,12 @@ export default async function GuidePage({
             <p className="text-lg font-semibold tracking-tight">
               내 공간에 맞는 배치, 상담에서 확인해보세요
             </p>
-            <a
-              href={SITE.reservationHref}
+            <ConsultingCtaLink
+              location="guide_detail"
               className="mt-5 inline-flex items-center rounded-full bg-ink px-8 py-3.5 text-sm font-medium text-paper transition-opacity hover:opacity-80"
             >
               내 공간 컨설팅 신청하기
-            </a>
+            </ConsultingCtaLink>
           </div>
 
           <p className="mt-10 text-xs text-mute">

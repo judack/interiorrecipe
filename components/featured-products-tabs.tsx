@@ -3,11 +3,14 @@
 import { useMemo, useState } from "react";
 import { CATEGORIES, PRODUCT_TYPES, type FeaturedProduct } from "@/lib/product";
 import { Reveal } from "@/components/reveal";
+import { trackEvent } from "@/lib/analytics";
 
 export function FeaturedProductsTabs({
   products,
+  source = "homepage_featured",
 }: {
   products: FeaturedProduct[];
+  source?: string;
 }) {
   const [activeCategory, setActiveCategory] = useState<string>(CATEGORIES[0]);
   const [activeType, setActiveType] = useState<string>("all");
@@ -94,6 +97,12 @@ export function FeaturedProductsTabs({
                 target="_blank"
                 rel="noopener noreferrer sponsored"
                 className="group block"
+                onClick={() =>
+                  trackEvent("product_click", {
+                    product_id: String(product.id),
+                    cta_location: source,
+                  })
+                }
               >
                 <div className="relative aspect-square overflow-hidden rounded-2xl bg-mist">
                   <img

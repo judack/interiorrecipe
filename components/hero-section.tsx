@@ -1,5 +1,6 @@
 import { SITE } from "@/lib/site-config";
 import { Reveal } from "@/components/reveal";
+import { ConsultingCtaLink } from "@/components/consulting-cta-link";
 
 export function HeroSection() {
   return (
@@ -43,12 +44,12 @@ export function HeroSection() {
 
         <Reveal delay={240}>
           <div className="mt-12 flex flex-wrap items-center gap-3">
-            <a
-              href={SITE.reservationHref}
+            <ConsultingCtaLink
+              location="hero"
               className="inline-flex items-center rounded-full bg-paper px-8 py-4 text-base font-medium text-ink transition-opacity hover:opacity-80"
             >
               내 공간 컨설팅 신청하기
-            </a>
+            </ConsultingCtaLink>
             <a
               href="#guide"
               className="inline-flex items-center rounded-full border border-white/40 px-8 py-4 text-base font-medium text-white transition-colors hover:bg-white/10"
