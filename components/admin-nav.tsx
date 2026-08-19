@@ -8,6 +8,7 @@ const TABS = [
   { href: "/admin/calendar", label: "캘린더" },
   { href: "/admin/products", label: "추천 아이템" },
   { href: "/admin/stats", label: "방문자 통계" },
+  { href: "/admin/conversion", label: "전환 대시보드" },
 ];
 
 export function AdminNav() {
