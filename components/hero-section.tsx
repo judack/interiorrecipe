@@ -28,27 +28,34 @@ export function HeroSection() {
 
         <Reveal delay={80}>
           <h1 className="mt-6 max-w-4xl text-[2rem] leading-[1.2] font-semibold tracking-tight text-white md:text-6xl lg:text-7xl">
-            내 방, 어떻게 꾸며야 할지
+            좁은 집도 배치가 바뀌면
             <br />
-            모르겠다면?
+            삶이 달라집니다
           </h1>
         </Reveal>
 
         <Reveal delay={160}>
           <p className="mt-8 max-w-md text-lg leading-relaxed text-white/80 md:text-xl">
-            사진만 보내주세요.
-            <br />
-            공간에 맞는 가구배치와 인테리어 솔루션을 제안합니다.
+            인테리어레시피는 원룸과 소형 주거공간의 구조, 생활 습관, 예산을
+            분석해 나에게 맞는 가구배치와 제품을 제안합니다.
           </p>
         </Reveal>
 
         <Reveal delay={240}>
-          <a
-            href={SITE.reservationHref}
-            className="mt-12 inline-flex items-center rounded-full bg-paper px-8 py-4 text-base font-medium text-ink transition-opacity hover:opacity-80"
-          >
-            내 방 컨설팅 신청하기
-          </a>
+          <div className="mt-12 flex flex-wrap items-center gap-3">
+            <a
+              href={SITE.reservationHref}
+              className="inline-flex items-center rounded-full bg-paper px-8 py-4 text-base font-medium text-ink transition-opacity hover:opacity-80"
+            >
+              내 공간 컨설팅 신청하기
+            </a>
+            <a
+              href="#guide"
+              className="inline-flex items-center rounded-full border border-white/40 px-8 py-4 text-base font-medium text-white transition-colors hover:bg-white/10"
+            >
+              공간 배치 가이드 보기
+            </a>
+          </div>
         </Reveal>
       </div>
     </section>

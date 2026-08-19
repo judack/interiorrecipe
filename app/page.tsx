@@ -3,6 +3,7 @@ import { SiteHeader } from "@/components/site-header";
 import { SocialQuickMenu } from "@/components/social-quick-menu";
 import { HeroSection } from "@/components/hero-section";
 import { ProblemSection } from "@/components/problem-section";
+import { SpaceGuideSection, GUIDE_ITEMS } from "@/components/space-guide-section";
 import { SolutionSection } from "@/components/solution-section";
 import { ProcessSection } from "@/components/process-section";
 import { FeaturedProductsSection } from "@/components/featured-products-section";
@@ -70,11 +71,18 @@ const serviceJsonLd = {
 const faqJsonLd = {
   "@context": "https://schema.org",
   "@type": "FAQPage",
-  mainEntity: FAQ_ITEMS.map((item) => ({
-    "@type": "Question",
-    name: item.question,
-    acceptedAnswer: { "@type": "Answer", text: item.answer },
-  })),
+  mainEntity: [
+    ...GUIDE_ITEMS.map((item) => ({
+      "@type": "Question",
+      name: item.question,
+      acceptedAnswer: { "@type": "Answer", text: item.answer },
+    })),
+    ...FAQ_ITEMS.map((item) => ({
+      "@type": "Question",
+      name: item.question,
+      acceptedAnswer: { "@type": "Answer", text: item.answer },
+    })),
+  ],
 };
 
 export default function Home() {
@@ -87,6 +95,7 @@ export default function Home() {
       <main>
         <HeroSection />
         <ProblemSection />
+        <SpaceGuideSection />
         <SolutionSection />
         <ProcessSection />
         <FeaturedProductsSection />
