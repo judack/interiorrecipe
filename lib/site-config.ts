@@ -30,4 +30,5 @@ export const NAV_LINKS = [
   { href: "/#process", label: "프로세스" },
   { href: "/#featured", label: "추천 아이템" },
   { href: "/#brand", label: "브랜드" },
+  { href: "/#faq", label: "FAQ" },
 ];

@@ -7,6 +7,7 @@ import { ReservationForm } from "@/components/reservation-form";
 export const metadata: Metadata = {
   title: "상담 신청 | 인테리어레시피",
   description: "몇 가지 정보를 알려주시면 공간에 맞는 솔루션을 준비해드립니다.",
+  alternates: { canonical: "/reservation" },
 };
 
 export default function ReservationPage() {
