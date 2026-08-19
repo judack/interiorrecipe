@@ -10,6 +10,7 @@ import { FeaturedProductsTabs } from "@/components/featured-products-tabs";
 import { GUIDES, getGuideBySlug } from "@/lib/guides";
 import { getGuideProducts } from "@/lib/guide-products";
 import { SITE } from "@/lib/site-config";
+import { buildBreadcrumbJsonLd, buildWebPageJsonLd } from "@/lib/structured-data";
 
 export function generateStaticParams() {
   return GUIDES.map((g) => ({ slug: g.slug }));
@@ -95,20 +96,29 @@ export default async function GuidePage({
     mainEntityOfPage: `${SITE.baseUrl}/guides/${guide.slug}`,
   };
 
+  const breadcrumbItems = [
+    { label: "홈", href: "/" },
+    { label: "가이드", href: "/guides" },
+    { label: guide.h1 },
+  ];
+  const webPageJsonLd = buildWebPageJsonLd({
+    path: `/guides/${guide.slug}`,
+    name: guide.title,
+    description: guide.metaDescription,
+    dateModified: guide.updatedDate,
+  });
+  const breadcrumbJsonLd = buildBreadcrumbJsonLd(breadcrumbItems);
+
   return (
     <>
+      <JsonLd data={webPageJsonLd} />
+      <JsonLd data={breadcrumbJsonLd} />
       <JsonLd data={articleJsonLd} />
       <SiteHeader />
       <SocialQuickMenu />
       <main className="px-6 pt-32 pb-24 md:px-10 md:pt-40 md:pb-32">
         <div className="mx-auto max-w-3xl">
-          <Breadcrumb
-            items={[
-              { label: "홈", href: "/" },
-              { label: "가이드", href: "/guides" },
-              { label: guide.h1 },
-            ]}
-          />
+          <Breadcrumb items={breadcrumbItems} />
 
           <p className="mt-6 text-xs font-medium tracking-[0.2em] text-mute uppercase">
             Guide

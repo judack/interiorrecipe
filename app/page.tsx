@@ -13,6 +13,8 @@ import { FinalCtaSection } from "@/components/final-cta-section";
 import { SiteFooter } from "@/components/site-footer";
 import { JsonLd } from "@/components/json-ld";
 import { SITE } from "@/lib/site-config";
+import { buildWebPageJsonLd } from "@/lib/structured-data";
+import { TITLE, DESCRIPTION } from "@/app/layout";
 
 export const dynamic = "force-dynamic";
 
@@ -68,6 +70,12 @@ const serviceJsonLd = {
   },
 };
 
+const webPageJsonLd = buildWebPageJsonLd({
+  path: "/",
+  name: TITLE,
+  description: DESCRIPTION,
+});
+
 const faqJsonLd = {
   "@context": "https://schema.org",
   "@type": "FAQPage",
@@ -88,6 +96,7 @@ const faqJsonLd = {
 export default function Home() {
   return (
     <>
+      <JsonLd data={webPageJsonLd} />
       <JsonLd data={serviceJsonLd} />
       <JsonLd data={faqJsonLd} />
       <SiteHeader />

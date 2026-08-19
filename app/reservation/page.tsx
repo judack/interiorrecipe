@@ -3,16 +3,28 @@ import { SiteHeader } from "@/components/site-header";
 import { SiteFooter } from "@/components/site-footer";
 import { SocialQuickMenu } from "@/components/social-quick-menu";
 import { ReservationForm } from "@/components/reservation-form";
+import { JsonLd } from "@/components/json-ld";
+import { buildWebPageJsonLd } from "@/lib/structured-data";
+
+const TITLE = "상담 신청 | 인테리어레시피";
+const DESCRIPTION = "몇 가지 정보를 알려주시면 공간에 맞는 솔루션을 준비해드립니다.";
 
 export const metadata: Metadata = {
-  title: "상담 신청 | 인테리어레시피",
-  description: "몇 가지 정보를 알려주시면 공간에 맞는 솔루션을 준비해드립니다.",
+  title: TITLE,
+  description: DESCRIPTION,
   alternates: { canonical: "/reservation" },
 };
+
+const webPageJsonLd = buildWebPageJsonLd({
+  path: "/reservation",
+  name: TITLE,
+  description: DESCRIPTION,
+});
 
 export default function ReservationPage() {
   return (
     <>
+      <JsonLd data={webPageJsonLd} />
       <SiteHeader />
       <SocialQuickMenu />
       <main className="px-6 pt-32 pb-24 md:px-10 md:pt-40 md:pb-32">

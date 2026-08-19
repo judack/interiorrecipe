@@ -5,7 +5,12 @@ export function SiteFooter() {
     <footer className="px-6 py-16 md:px-10">
       <div className="mx-auto flex max-w-6xl flex-col gap-10 border-t border-line pt-10 md:flex-row md:items-start md:justify-between">
         <div>
-          <p className="text-sm font-semibold tracking-tight">{SITE.name}</p>
+          <p className="text-sm font-semibold tracking-tight">
+            {SITE.name}
+            <span className="ml-2 text-xs font-normal text-mute">
+              {SITE.alternateName}
+            </span>
+          </p>
           <p className="mt-2 max-w-xs text-sm text-mute">
             사진 한 장으로 시작하는 맞춤 공간 솔루션.
           </p>

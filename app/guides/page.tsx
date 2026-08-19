@@ -4,23 +4,38 @@ import { SiteHeader } from "@/components/site-header";
 import { SiteFooter } from "@/components/site-footer";
 import { SocialQuickMenu } from "@/components/social-quick-menu";
 import { Breadcrumb } from "@/components/breadcrumb";
+import { JsonLd } from "@/components/json-ld";
+import { buildBreadcrumbJsonLd, buildWebPageJsonLd } from "@/lib/structured-data";
 import { GUIDES } from "@/lib/guides";
 
+const TITLE = "공간 배치 가이드 | 인테리어레시피";
+const DESCRIPTION =
+  "원룸과 소형 주거공간의 가구배치를 평수별, 주제별로 정리한 가이드 모음이에요.";
+
 export const metadata: Metadata = {
-  title: "공간 배치 가이드 | 인테리어레시피",
-  description:
-    "원룸과 소형 주거공간의 가구배치를 평수별, 주제별로 정리한 가이드 모음이에요.",
+  title: TITLE,
+  description: DESCRIPTION,
   alternates: { canonical: "/guides" },
 };
+
+const breadcrumbItems = [{ label: "홈", href: "/" }, { label: "가이드" }];
+const webPageJsonLd = buildWebPageJsonLd({
+  path: "/guides",
+  name: TITLE,
+  description: DESCRIPTION,
+});
+const breadcrumbJsonLd = buildBreadcrumbJsonLd(breadcrumbItems);
 
 export default function GuidesIndexPage() {
   return (
     <>
+      <JsonLd data={webPageJsonLd} />
+      <JsonLd data={breadcrumbJsonLd} />
       <SiteHeader />
       <SocialQuickMenu />
       <main className="px-6 pt-32 pb-24 md:px-10 md:pt-40 md:pb-32">
         <div className="mx-auto max-w-3xl">
-          <Breadcrumb items={[{ label: "홈", href: "/" }, { label: "가이드" }]} />
+          <Breadcrumb items={breadcrumbItems} />
 
           <p className="mt-6 text-xs font-medium tracking-[0.2em] text-mute uppercase">
             Guide

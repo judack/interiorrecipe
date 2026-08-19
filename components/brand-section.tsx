@@ -6,6 +6,8 @@ const STATEMENTS = [
   "우리는 실제로 거주 가능한 대안을 제안합니다.",
 ];
 
+const SERVICES = ["가구배치", "공간분리", "수납", "가구 추천", "인테리어 컨설팅"];
+
 export function BrandSection() {
   return (
     <section id="brand" className="bg-mist px-6 py-28 md:px-10 md:py-40">
@@ -24,6 +26,16 @@ export function BrandSection() {
             서비스입니다. 넓은 평수나 값비싼 가구가 아니라, 지금 있는
             공간을 가장 잘 쓰는 방법을 제안합니다.
           </p>
+          <ul className="mt-6 flex flex-wrap gap-2">
+            {SERVICES.map((service) => (
+              <li
+                key={service}
+                className="rounded-full border border-line px-4 py-1.5 text-sm text-mute"
+              >
+                {service}
+              </li>
+            ))}
+          </ul>
         </Reveal>
 
         <Reveal delay={120}>
