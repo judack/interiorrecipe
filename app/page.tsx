@@ -10,6 +10,7 @@ import { FeaturedProductsSection } from "@/components/featured-products-section"
 import { BrandSection } from "@/components/brand-section";
 import { FaqSection, FAQ_ITEMS } from "@/components/faq-section";
 import { FinalCtaSection } from "@/components/final-cta-section";
+import { PartnersSection } from "@/components/partners-section";
 import { SiteFooter } from "@/components/site-footer";
 import { JsonLd } from "@/components/json-ld";
 import { SITE } from "@/lib/site-config";
@@ -111,6 +112,7 @@ export default function Home() {
         <BrandSection />
         <FaqSection />
         <FinalCtaSection />
+        <PartnersSection />
       </main>
       <SiteFooter />
     </>

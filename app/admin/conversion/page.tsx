@@ -39,6 +39,28 @@ async function countProductClicksByLocation(location: string, cutoffIso: string)
   return Number(rows[0].c);
 }
 
+async function getPartnerClicks(cutoffIso: string) {
+  const totalRows = await sql`
+    SELECT count(*) AS c
+    FROM analytics_events
+    WHERE event_name = 'partner_click' AND created_at > ${cutoffIso}
+  `;
+  const recentRows = await sql`
+    SELECT properties->>'content_id' AS partner, created_at
+    FROM analytics_events
+    WHERE event_name = 'partner_click' AND created_at > ${cutoffIso}
+    ORDER BY created_at DESC
+    LIMIT 10
+  `;
+  return {
+    total: Number(totalRows[0].c),
+    recent: recentRows.map((r) => ({
+      partner: (r.partner as string) || "(미상)",
+      createdAt: r.created_at as string,
+    })),
+  };
+}
+
 async function countLandingVisitors(cutoffIso: string) {
   const rows = await sql`
     SELECT count(DISTINCT visitor_id) AS c
@@ -106,6 +128,7 @@ async function getConversionStats(days: number) {
     consultingComplete,
     igFunnel,
     productCount,
+    partnerClicks,
   ] = await Promise.all([
     countSearchVisitors(cutoffIso),
     countEvents("guide_view", cutoffIso),
@@ -115,6 +138,7 @@ async function getConversionStats(days: number) {
     countEvents("consulting_complete", cutoffIso),
     getInstagramFunnel(cutoffIso),
     sql`SELECT count(*) AS c FROM products`.then((r) => Number(r[0].c)),
+    getPartnerClicks(cutoffIso),
   ]);
 
   return {
@@ -126,6 +150,7 @@ async function getConversionStats(days: number) {
     consultingComplete,
     igFunnel,
     productCount,
+    partnerClicks,
   };
 }
 
@@ -414,6 +439,47 @@ export default async function AdminConversionPage({
                 reason="결제 시스템이 없어 매출 데이터가 존재하지 않음"
               />
             </div>
+          </div>
+        </div>
+
+        <h2 className="mt-14 text-lg font-semibold tracking-tight">
+          파트너사 클릭
+        </h2>
+        <p className="mt-2 text-sm text-mute">
+          홈페이지 하단 파트너사 로고를 눌러 외부 사이트로 이동한 기록이에요.
+        </p>
+        <div className="mt-6 grid grid-cols-1 gap-6 md:grid-cols-3">
+          <div className="rounded-2xl border border-line p-6 md:col-span-1">
+            <p className="text-sm text-mute">{range.label} 클릭 수</p>
+            <p className="mt-2 text-3xl font-semibold tracking-tight">
+              {stats.partnerClicks.total.toLocaleString()}회
+            </p>
+            <p className="mt-2 text-xs text-mute">OFRAME (oframe.kr/shop)</p>
+          </div>
+          <div className="rounded-2xl border border-line p-6 md:col-span-2">
+            <p className="text-sm font-medium">최근 클릭 기록</p>
+            {stats.partnerClicks.recent.length === 0 ? (
+              <p className="mt-3 text-sm text-mute">
+                아직 클릭 기록이 없습니다.
+              </p>
+            ) : (
+              <div className="mt-3 flex flex-col gap-2">
+                {stats.partnerClicks.recent.map((click, i) => (
+                  <div
+                    key={`${click.createdAt}-${i}`}
+                    className="flex items-center justify-between border-b border-line py-2 text-sm last:border-b-0"
+                  >
+                    <span>{click.partner}</span>
+                    <span className="text-mute">
+                      {new Date(click.createdAt).toLocaleString("ko-KR", {
+                        dateStyle: "medium",
+                        timeStyle: "short",
+                      })}
+                    </span>
+                  </div>
+                ))}
+              </div>
+            )}
           </div>
         </div>
       </div>
