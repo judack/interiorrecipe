@@ -13,42 +13,92 @@ export const dynamic = "force-dynamic";
 const RANGE_OPTIONS = [
   { key: "30", label: "최근 30일", days: 30 },
   { key: "90", label: "90일", days: 90 },
+  { key: "120", label: "120일", days: 120 },
+  { key: "365", label: "1년", days: 365 },
 ] as const;
 
-function resolveRange(key: string | undefined) {
+function resolvePreset(key: string | undefined) {
   return RANGE_OPTIONS.find((r) => r.key === key) ?? RANGE_OPTIONS[0];
 }
 
-async function countEvents(eventName: string, cutoffIso: string) {
+function isValidDateStr(s: string | undefined): s is string {
+  return !!s && /^\d{4}-\d{2}-\d{2}$/.test(s);
+}
+
+type ResolvedRange = {
+  fromIso: string;
+  toIso: string;
+  label: string;
+  activeKey: string | null;
+  fromDate: string;
+  toDate: string;
+};
+
+function resolveDateRange(
+  rangeKey: string | undefined,
+  fromParam: string | undefined,
+  toParam: string | undefined
+): ResolvedRange {
+  const now = new Date();
+  const todayStr = now.toISOString().slice(0, 10);
+
+  if (isValidDateStr(fromParam) && isValidDateStr(toParam) && fromParam <= toParam) {
+    return {
+      fromIso: new Date(`${fromParam}T00:00:00.000`).toISOString(),
+      toIso: new Date(`${toParam}T23:59:59.999`).toISOString(),
+      label: `${fromParam} ~ ${toParam}`,
+      activeKey: null,
+      fromDate: fromParam,
+      toDate: toParam,
+    };
+  }
+
+  const preset = resolvePreset(rangeKey);
+  const fromDate = new Date(Date.now() - preset.days * 24 * 60 * 60 * 1000);
+  return {
+    fromIso: fromDate.toISOString(),
+    toIso: now.toISOString(),
+    label: preset.label,
+    activeKey: preset.key,
+    fromDate: fromDate.toISOString().slice(0, 10),
+    toDate: todayStr,
+  };
+}
+
+async function countEvents(eventName: string, fromIso: string, toIso: string) {
   const rows = await sql`
     SELECT count(DISTINCT visitor_id) AS c
     FROM analytics_events
-    WHERE event_name = ${eventName} AND created_at > ${cutoffIso}
+    WHERE event_name = ${eventName} AND created_at > ${fromIso} AND created_at <= ${toIso}
   `;
   return Number(rows[0].c);
 }
 
-async function countProductClicksByLocation(location: string, cutoffIso: string) {
+async function countProductClicksByLocation(
+  location: string,
+  fromIso: string,
+  toIso: string
+) {
   const rows = await sql`
     SELECT count(*) AS c
     FROM analytics_events
     WHERE event_name = 'product_click'
       AND properties->>'cta_location' = ${location}
-      AND created_at > ${cutoffIso}
+      AND created_at > ${fromIso} AND created_at <= ${toIso}
   `;
   return Number(rows[0].c);
 }
 
-async function getPartnerClicks(cutoffIso: string) {
+async function getPartnerClicks(fromIso: string, toIso: string) {
   const totalRows = await sql`
     SELECT count(*) AS c
     FROM analytics_events
-    WHERE event_name = 'partner_click' AND created_at > ${cutoffIso}
+    WHERE event_name = 'partner_click' AND created_at > ${fromIso} AND created_at <= ${toIso}
   `;
   const recentRows = await sql`
     SELECT properties->>'content_id' AS partner, created_at
     FROM analytics_events
-    WHERE event_name = 'partner_click' AND created_at > ${cutoffIso}
+    WHERE event_name = 'partner_click' AND created_at > ${fromIso} AND created_at <= ${toIso}
     ORDER BY created_at DESC
     LIMIT 10
   `;
@@ -61,45 +111,45 @@ async function getPartnerClicks(cutoffIso: string) {
   };
 }
 
-async function countLandingVisitors(cutoffIso: string) {
+async function countLandingVisitors(fromIso: string, toIso: string) {
   const rows = await sql`
     SELECT count(DISTINCT visitor_id) AS c
     FROM page_views
-    WHERE created_at > ${cutoffIso}
+    WHERE created_at > ${fromIso} AND created_at <= ${toIso}
   `;
   return Number(rows[0].c);
 }
 
-async function countSearchVisitors(cutoffIso: string) {
+async function countSearchVisitors(fromIso: string, toIso: string) {
   const rows = await sql`
     SELECT count(DISTINCT visitor_id) AS c
     FROM page_views
-    WHERE created_at > ${cutoffIso}
+    WHERE created_at > ${fromIso} AND created_at <= ${toIso}
       AND (referrer ILIKE '%google%' OR referrer ILIKE '%naver%')
   `;
   return Number(rows[0].c);
 }
 
-async function getInstagramFunnel(cutoffIso: string) {
+async function getInstagramFunnel(fromIso: string, toIso: string) {
   const rows = await sql`
     WITH ig_visitors AS (
       SELECT DISTINCT visitor_id
       FROM analytics_events
-      WHERE event_name = 'instagram_landing_view' AND created_at > ${cutoffIso}
+      WHERE event_name = 'instagram_landing_view' AND created_at > ${fromIso} AND created_at <= ${toIso}
     )
     SELECT
       (SELECT count(*) FROM ig_visitors) AS landing,
       (SELECT count(DISTINCT visitor_id) FROM analytics_events
-        WHERE event_name = 'guide_view' AND created_at > ${cutoffIso}
+        WHERE event_name = 'guide_view' AND created_at > ${fromIso} AND created_at <= ${toIso}
           AND visitor_id IN (SELECT visitor_id FROM ig_visitors)) AS guide_view,
       (SELECT count(DISTINCT visitor_id) FROM analytics_events
-        WHERE event_name IN ('product_click', 'consulting_cta_click') AND created_at > ${cutoffIso}
+        WHERE event_name IN ('product_click', 'consulting_cta_click') AND created_at > ${fromIso} AND created_at <= ${toIso}
           AND visitor_id IN (SELECT visitor_id FROM ig_visitors)) AS key_action,
       (SELECT count(DISTINCT visitor_id) FROM analytics_events
-        WHERE event_name = 'consulting_start' AND created_at > ${cutoffIso}
+        WHERE event_name = 'consulting_start' AND created_at > ${fromIso} AND created_at <= ${toIso}
           AND visitor_id IN (SELECT visitor_id FROM ig_visitors)) AS start,
       (SELECT count(DISTINCT visitor_id) FROM analytics_events
-        WHERE event_name = 'consulting_complete' AND created_at > ${cutoffIso}
+        WHERE event_name = 'consulting_complete' AND created_at > ${fromIso} AND created_at <= ${toIso}
           AND visitor_id IN (SELECT visitor_id FROM ig_visitors)) AS complete
   `;
   const r = rows[0];
@@ -112,12 +162,10 @@ async function getInstagramFunnel(cutoffIso: string) {
   };
 }
 
-async function getConversionStats(days: number) {
+async function getConversionStats(fromIso: string, toIso: string) {
   await ensureAnalyticsEventsTable();
   await ensurePageViewsTable();
   await ensureProductsTable();
-
-  const cutoffIso = new Date(Date.now() - days * 24 * 60 * 60 * 1000).toISOString();
 
   const [
     searchVisitors,
@@ -130,15 +178,15 @@ async function getConversionStats(days: number) {
     productCount,
     partnerClicks,
   ] = await Promise.all([
-    countSearchVisitors(cutoffIso),
-    countEvents("guide_view", cutoffIso),
-    countProductClicksByLocation("guide_detail", cutoffIso),
-    countLandingVisitors(cutoffIso),
-    countEvents("consulting_start", cutoffIso),
-    countEvents("consulting_complete", cutoffIso),
-    getInstagramFunnel(cutoffIso),
+    countSearchVisitors(fromIso, toIso),
+    countEvents("guide_view", fromIso, toIso),
+    countProductClicksByLocation("guide_detail", fromIso, toIso),
+    countLandingVisitors(fromIso, toIso),
+    countEvents("consulting_start", fromIso, toIso),
+    countEvents("consulting_complete", fromIso, toIso),
+    getInstagramFunnel(fromIso, toIso),
     sql`SELECT count(*) AS c FROM products`.then((r) => Number(r[0].c)),
-    getPartnerClicks(cutoffIso),
+    getPartnerClicks(fromIso, toIso),
   ]);
 
   return {
@@ -231,11 +279,11 @@ function GuardedMetricRow({
 export default async function AdminConversionPage({
   searchParams,
 }: {
-  searchParams: Promise<{ range?: string }>;
+  searchParams: Promise<{ range?: string; from?: string; to?: string }>;
 }) {
-  const { range: rangeKey } = await searchParams;
-  const range = resolveRange(rangeKey);
-  const stats = await getConversionStats(range.days);
+  const { range: rangeKey, from: fromParam, to: toParam } = await searchParams;
+  const range = resolveDateRange(rangeKey, fromParam, toParam);
+  const stats = await getConversionStats(range.fromIso, range.toIso);
 
   const guideToProductCtr = pct(stats.guideProductClicks, stats.guideViews);
   const consultingStartRate = pct(stats.consultingStart, stats.landingVisitors);
@@ -272,7 +320,7 @@ export default async function AdminConversionPage({
               key={opt.key}
               href={`/admin/conversion?range=${opt.key}`}
               className={`rounded-full border px-4 py-2 text-sm font-medium transition-colors ${
-                opt.key === range.key
+                opt.key === range.activeKey
                   ? "border-ink bg-ink text-paper"
                   : "border-line text-ink hover:bg-mist"
               }`}
@@ -281,6 +329,48 @@ export default async function AdminConversionPage({
             </Link>
           ))}
         </div>
+
+        <form
+          method="get"
+          className="mt-4 flex flex-wrap items-end gap-3 rounded-2xl border border-line p-4"
+        >
+          <div>
+            <label className="block text-xs text-mute" htmlFor="from">
+              시작일
+            </label>
+            <input
+              id="from"
+              name="from"
+              type="date"
+              defaultValue={range.fromDate}
+              max={range.toDate}
+              className="mt-1 rounded-lg border border-line px-3 py-1.5 text-sm outline-none focus:border-ink"
+            />
+          </div>
+          <div>
+            <label className="block text-xs text-mute" htmlFor="to">
+              종료일
+            </label>
+            <input
+              id="to"
+              name="to"
+              type="date"
+              defaultValue={range.toDate}
+              className="mt-1 rounded-lg border border-line px-3 py-1.5 text-sm outline-none focus:border-ink"
+            />
+          </div>
+          <button
+            type="submit"
+            className="rounded-full bg-ink px-5 py-2 text-sm font-medium text-paper transition-opacity hover:opacity-80"
+          >
+            맞춤 기간 적용
+          </button>
+          {range.activeKey === null && (
+            <span className="text-xs text-mute">
+              맞춤 기간 적용 중: {range.label}
+            </span>
+          )}
+        </form>
 
         <div className="mt-8 grid grid-cols-2 gap-4 md:grid-cols-4">
           <KpiCard
