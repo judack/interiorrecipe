@@ -3,7 +3,7 @@
 import { trackEvent } from "@/lib/analytics";
 
 const PARTNERS = [
-  { name: "OFRAME", href: "https://oframe.kr/shop", logo: "/images/oframe-logo.png" },
+  { name: "OFRAME", href: "https://oframe.kr/r/recipe", logo: "/images/oframe-logo.png" },
 ];
 
 export function PartnersSection() {
