@@ -65,6 +65,9 @@ function StatusButtons({
   );
 }
 
+const SERVICE_FILTERS = ["전체", "유료", "무료"] as const;
+type ServiceFilter = (typeof SERVICE_FILTERS)[number];
+
 export function AdminReservationsTable({
   initialReservations,
 }: {
@@ -72,6 +75,12 @@ export function AdminReservationsTable({
 }) {
   const [reservations, setReservations] = useState(initialReservations);
   const [deletingId, setDeletingId] = useState<number | null>(null);
+  const [serviceFilter, setServiceFilter] = useState<ServiceFilter>("전체");
+
+  const filteredReservations =
+    serviceFilter === "전체"
+      ? reservations
+      : reservations.filter((r) => r.service_type === serviceFilter);
 
   function handleStatusChange(id: number, status: ReservationStatus) {
     setReservations((prev) =>
@@ -96,7 +105,28 @@ export function AdminReservationsTable({
   }
 
   return (
-    <div className="overflow-x-auto">
+    <div>
+      <div className="flex flex-wrap items-center gap-2">
+        {SERVICE_FILTERS.map((f) => (
+          <button
+            key={f}
+            type="button"
+            onClick={() => setServiceFilter(f)}
+            className={`rounded-full border px-4 py-1.5 text-sm font-medium transition-colors ${
+              f === serviceFilter
+                ? "border-ink bg-ink text-paper"
+                : "border-line text-ink hover:bg-mist"
+            }`}
+          >
+            {f}
+          </button>
+        ))}
+        <span className="text-sm text-mute">
+          {filteredReservations.length.toLocaleString()}건 표시 중
+        </span>
+      </div>
+
+      <div className="mt-4 overflow-x-auto">
       <table className="w-full min-w-[1660px] border-collapse text-left text-sm">
         <thead>
           <tr className="border-b border-line text-mute">
@@ -158,7 +188,7 @@ export function AdminReservationsTable({
           </tr>
         </thead>
         <tbody>
-          {reservations.map((r) => (
+          {filteredReservations.map((r) => (
             <tr key={r.id} className="border-b border-line align-top">
               <td className="py-4 pr-6 whitespace-nowrap">
                 {formatDate(r.created_at)}
@@ -241,11 +271,18 @@ export function AdminReservationsTable({
           ))}
         </tbody>
       </table>
+      </div>
 
-      {reservations.length === 0 && (
+      {reservations.length === 0 ? (
         <p className="mt-10 text-sm text-mute">
           아직 접수된 상담 신청이 없습니다.
         </p>
+      ) : (
+        filteredReservations.length === 0 && (
+          <p className="mt-10 text-sm text-mute">
+            {`"${serviceFilter}"에 해당하는 상담 신청이 없습니다.`}
+          </p>
+        )
       )}
     </div>
   );
